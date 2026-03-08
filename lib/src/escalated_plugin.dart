@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'escalated_config.dart';
 import 'providers/auth_provider.dart';
+import 'providers/theme_provider.dart';
 import 'services/api_client.dart';
 import 'services/auth_hooks.dart';
 
@@ -63,6 +64,12 @@ class EscalatedPlugin extends StatelessWidget {
           return ApiClient(
             authHooks: hooks,
             baseUrl: config.apiBaseUrl,
+          );
+        }),
+        themeProvider.overrideWith((ref) {
+          return ThemeNotifier(
+            primaryColor: config.primaryColor,
+            borderRadius: config.borderRadius,
           );
         }),
       ],

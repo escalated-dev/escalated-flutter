@@ -5,19 +5,27 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 class ThemeState {
   final ThemeMode themeMode;
   final Locale locale;
+  final Color? primaryColor;
+  final double? borderRadius;
 
   const ThemeState({
     this.themeMode = ThemeMode.system,
     this.locale = const Locale('en'),
+    this.primaryColor,
+    this.borderRadius,
   });
 
   ThemeState copyWith({
     ThemeMode? themeMode,
     Locale? locale,
+    Color? primaryColor,
+    double? borderRadius,
   }) {
     return ThemeState(
       themeMode: themeMode ?? this.themeMode,
       locale: locale ?? this.locale,
+      primaryColor: primaryColor ?? this.primaryColor,
+      borderRadius: borderRadius ?? this.borderRadius,
     );
   }
 }
@@ -27,9 +35,15 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
   static const _localeKey = 'escalated_locale';
   final FlutterSecureStorage _storage;
 
-  ThemeNotifier({FlutterSecureStorage? storage})
-      : _storage = storage ?? const FlutterSecureStorage(),
-        super(const ThemeState()) {
+  ThemeNotifier({
+    FlutterSecureStorage? storage,
+    Color? primaryColor,
+    double? borderRadius,
+  })  : _storage = storage ?? const FlutterSecureStorage(),
+        super(ThemeState(
+          primaryColor: primaryColor,
+          borderRadius: borderRadius,
+        )) {
     _loadPreferences();
   }
 
@@ -50,7 +64,7 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
         locale = Locale(localeStr);
       }
 
-      state = ThemeState(themeMode: themeMode, locale: locale);
+      state = state.copyWith(themeMode: themeMode, locale: locale);
     } catch (_) {
       // Use defaults if storage fails
     }

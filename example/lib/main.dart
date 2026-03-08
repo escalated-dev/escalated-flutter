@@ -129,8 +129,14 @@ class ExampleApp extends ConsumerWidget {
     return MaterialApp.router(
       title: 'Escalated Example',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.light(),
-      darkTheme: AppTheme.dark(),
+      theme: AppTheme.light(
+        primaryColor: themeState.primaryColor,
+        borderRadius: themeState.borderRadius,
+      ),
+      darkTheme: AppTheme.dark(
+        primaryColor: themeState.primaryColor,
+        borderRadius: themeState.borderRadius,
+      ),
       themeMode: themeState.themeMode,
       locale: themeState.locale,
       supportedLocales: AppLocalizations.supportedLocales,
