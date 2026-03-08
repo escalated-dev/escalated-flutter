@@ -7,7 +7,7 @@ import '../services/auth_hooks.dart';
 
 // Auth hooks provider — override this to swap in custom auth
 final authHooksProvider = Provider<AuthHooks>((ref) {
-  return DefaultAuthHooks();
+  return DefaultAuthHooks(apiBaseUrl: 'http://localhost:8000/support/api/v1');
 });
 
 // API client provider
@@ -68,8 +68,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
   Future<void> checkAuth() async {
     state = state.copyWith(isLoading: true);
     try {
-      final isAuth = await _authHooks.isAuthenticated();
-      if (isAuth) {
+      final headers = await _authHooks.getAuthHeaders();
+      if (headers.isNotEmpty) {
         final user = await _apiService.getProfile();
         state = AuthState(
           status: AuthStatus.authenticated,
@@ -89,14 +89,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final response = await _apiService.login(
-        email: email,
-        password: password,
-      );
-      final token = response['token'] as String? ??
-          response['data']?['token'] as String? ??
-          '';
-      await _authHooks.setToken(token);
+      final result = await _authHooks.onLogin(email, password);
 
       final user = await _apiService.getProfile();
       state = AuthState(
@@ -128,16 +121,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final response = await _apiService.register(
-        name: name,
-        email: email,
-        password: password,
-        passwordConfirmation: passwordConfirmation,
-      );
-      final token = response['token'] as String? ??
-          response['data']?['token'] as String? ??
-          '';
-      await _authHooks.setToken(token);
+      final result = await _authHooks.onRegister({
+        'name': name,
+        'email': email,
+        'password': password,
+        'password_confirmation': passwordConfirmation,
+      });
 
       final user = await _apiService.getProfile();
       state = AuthState(
@@ -167,7 +156,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     } catch (_) {
       // Ignore errors on logout
     }
-    await _authHooks.clearToken();
+    await _authHooks.onLogout();
     state = const AuthState(status: AuthStatus.unauthenticated);
   }
 

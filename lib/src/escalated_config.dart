@@ -35,5 +35,5 @@ class EscalatedConfig {
     this.darkMode = false,
     this.primaryColor,
     this.borderRadius,
-  }) : authHooks = authHooks ?? DefaultAuthHooks();
+  }) : authHooks = authHooks ?? DefaultAuthHooks(apiBaseUrl: apiBaseUrl);
 }

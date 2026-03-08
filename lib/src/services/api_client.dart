@@ -44,9 +44,25 @@ class _AuthInterceptor extends Interceptor {
   }
 
   @override
-  void onError(DioException err, ErrorInterceptorHandler handler) {
-    if (err.response?.statusCode == 401) {
-      _authHooks.clearToken();
+  Future<void> onError(DioException err, ErrorInterceptorHandler handler) async {
+    final statusCode = err.response?.statusCode;
+    if (statusCode != null) {
+      final body = err.response?.data is Map<String, dynamic>
+          ? err.response!.data as Map<String, dynamic>
+          : <String, dynamic>{};
+      final recovered = await _authHooks.onAuthError(statusCode, body);
+      if (recovered) {
+        // Retry the original request with refreshed headers
+        try {
+          final headers = await _authHooks.getAuthHeaders();
+          final opts = err.requestOptions;
+          opts.headers.addAll(headers);
+          final response = await Dio().fetch(opts);
+          return handler.resolve(response);
+        } catch (_) {
+          // Fall through to error
+        }
+      }
     }
     handler.next(err);
   }
