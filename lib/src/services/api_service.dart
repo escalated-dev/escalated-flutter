@@ -3,6 +3,7 @@ import 'api_client.dart';
 import '../models/article.dart';
 import '../models/department.dart';
 import '../models/paginated_response.dart';
+import '../models/tag.dart';
 import '../models/ticket.dart';
 import '../models/ticket_summary.dart';
 import '../models/user.dart';
@@ -198,6 +199,23 @@ class ApiService {
     final response = await _dio.get('/kb/categories');
     return (response.data['data'] as List<dynamic>)
         .cast<Map<String, dynamic>>();
+  }
+
+  // ─── Tags ─────────────────────────────────────────────────────────
+
+  Future<List<Tag>> getTags() async {
+    final response = await _dio.get('/tags');
+    final List<dynamic> data = response.data['data'] ?? response.data;
+    return data.map((json) => Tag.fromJson(json as Map<String, dynamic>)).toList();
+  }
+
+  // ─── Token Validation ────────────────────────────────────────────
+
+  Future<User> validateToken() async {
+    final response = await _dio.post('/auth/validate');
+    return User.fromJson(
+      (response.data['data'] ?? response.data) as Map<String, dynamic>,
+    );
   }
 
   // ─── Departments ───────────────────────────────────────────────────
