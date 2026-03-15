@@ -215,6 +215,8 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ),
           ),
+          const SizedBox(height: 8),
+          const _PoweredByEscalated(),
           const SizedBox(height: 16),
         ],
       ),
@@ -367,6 +369,42 @@ class _LanguageTile extends StatelessWidget {
               color: isDark ? AppColors.borderDark : AppColors.borderLight,
             ),
       onTap: onTap,
+    );
+  }
+}
+
+class _PoweredByEscalated extends StatelessWidget {
+  const _PoweredByEscalated();
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Opacity(
+      opacity: 0.5,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.open_in_new,
+            size: 12,
+            color: isDark
+                ? AppColors.textSecondaryDark
+                : AppColors.textSecondaryLight,
+          ),
+          const SizedBox(width: 4),
+          Text(
+            'Powered by Escalated',
+            style: TextStyle(
+              fontSize: 11,
+              color: isDark
+                  ? AppColors.textSecondaryDark
+                  : AppColors.textSecondaryLight,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
