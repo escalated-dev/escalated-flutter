@@ -147,8 +147,8 @@ class _KbArticleScreenState extends ConsumerState<KbArticleScreen> {
               data: article.body!,
               style: {
                 'body': Style(
-                  margin: Margins.zero,
-                  padding: HtmlPaddings.zero,
+                  margin: EdgeInsets.zero,
+                  padding: EdgeInsets.zero,
                   fontSize: FontSize(15),
                   lineHeight: const LineHeight(1.6),
                   color: isDark
@@ -156,22 +156,22 @@ class _KbArticleScreenState extends ConsumerState<KbArticleScreen> {
                       : AppColors.textPrimaryLight,
                 ),
                 'p': Style(
-                  margin: Margins.only(bottom: 12),
+                  margin: const EdgeInsets.only(bottom: 12),
                 ),
                 'h1': Style(
                   fontSize: FontSize(22),
                   fontWeight: FontWeight.w700,
-                  margin: Margins.only(top: 16, bottom: 8),
+                  margin: const EdgeInsets.only(top: 16, bottom: 8),
                 ),
                 'h2': Style(
                   fontSize: FontSize(19),
                   fontWeight: FontWeight.w700,
-                  margin: Margins.only(top: 14, bottom: 8),
+                  margin: const EdgeInsets.only(top: 14, bottom: 8),
                 ),
                 'h3': Style(
                   fontSize: FontSize(17),
                   fontWeight: FontWeight.w600,
-                  margin: Margins.only(top: 12, bottom: 6),
+                  margin: const EdgeInsets.only(top: 12, bottom: 6),
                 ),
                 'a': Style(
                   color: AppColors.primary,
@@ -181,7 +181,7 @@ class _KbArticleScreenState extends ConsumerState<KbArticleScreen> {
                   backgroundColor: isDark
                       ? Colors.white.withOpacity(0.08)
                       : Colors.grey.withOpacity(0.1),
-                  padding: HtmlPaddings.symmetric(horizontal: 4, vertical: 2),
+                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                   fontFamily: 'monospace',
                   fontSize: FontSize(13),
                 ),
@@ -189,7 +189,7 @@ class _KbArticleScreenState extends ConsumerState<KbArticleScreen> {
                   backgroundColor: isDark
                       ? Colors.white.withOpacity(0.06)
                       : Colors.grey.withOpacity(0.08),
-                  padding: HtmlPaddings.all(12),
+                  padding: const EdgeInsets.all(12),
                 ),
                 'blockquote': Style(
                   border: Border(
@@ -198,14 +198,14 @@ class _KbArticleScreenState extends ConsumerState<KbArticleScreen> {
                       width: 3,
                     ),
                   ),
-                  padding: HtmlPaddings.only(left: 12),
-                  margin: Margins.symmetric(vertical: 8),
+                  padding: const EdgeInsets.only(left: 12),
+                  margin: const EdgeInsets.symmetric(vertical: 8),
                 ),
                 'ul': Style(
-                  margin: Margins.only(bottom: 12),
+                  margin: const EdgeInsets.only(bottom: 12),
                 ),
                 'ol': Style(
-                  margin: Margins.only(bottom: 12),
+                  margin: const EdgeInsets.only(bottom: 12),
                 ),
               },
             ),
