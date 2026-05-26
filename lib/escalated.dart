@@ -10,7 +10,7 @@
 ///
 /// EscalatedPlugin(
 ///   config: EscalatedConfig(
-///     apiBaseUrl: 'https://example.com/support/api/v1',
+///     apiBaseUrl: 'https://example.com/support/api/v1/mobile',
 ///   ),
 ///   child: MaterialApp.router(routerConfig: yourRouter),
 /// )

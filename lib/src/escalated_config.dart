@@ -6,7 +6,7 @@ import 'services/auth_hooks.dart';
 /// Consumers create an instance of this class and pass it to [EscalatedPlugin]
 /// to configure the library's behavior, theming, and authentication.
 class EscalatedConfig {
-  /// The base URL for the Escalated API (e.g. 'https://example.com/support/api/v1').
+  /// The base URL for the Escalated API (e.g. 'https://example.com/support/api/v1/mobile').
   final String apiBaseUrl;
 
   /// The authentication hooks implementation.

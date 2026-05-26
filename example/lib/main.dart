@@ -15,7 +15,7 @@ void main() {
   runApp(
     EscalatedPlugin(
       config: EscalatedConfig(
-        apiBaseUrl: 'https://example.com/support/api/v1',
+        apiBaseUrl: 'https://example.com/support/api/v1/mobile',
         // Optionally provide a custom AuthHooks implementation:
         // authHooks: MyCustomAuthHooks(),
       ),

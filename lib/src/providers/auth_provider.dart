@@ -7,7 +7,9 @@ import '../services/auth_hooks.dart';
 
 // Auth hooks provider — override this to swap in custom auth
 final authHooksProvider = Provider<AuthHooks>((ref) {
-  return DefaultAuthHooks(apiBaseUrl: 'http://localhost:8000/support/api/v1');
+  return DefaultAuthHooks(
+    apiBaseUrl: 'http://localhost:8000/support/api/v1/mobile',
+  );
 });
 
 // API client provider
@@ -15,7 +17,7 @@ final apiClientProvider = Provider<ApiClient>((ref) {
   final authHooks = ref.watch(authHooksProvider);
   return ApiClient(
     authHooks: authHooks,
-    baseUrl: 'http://localhost:8000/support/api/v1',
+    baseUrl: 'http://localhost:8000/support/api/v1/mobile',
   );
 });
 
@@ -89,7 +91,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final result = await _authHooks.onLogin(email, password);
+      await _authHooks.onLogin(email, password);
 
       final user = await _apiService.getProfile();
       state = AuthState(
@@ -121,7 +123,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final result = await _authHooks.onRegister({
+      await _authHooks.onRegister({
         'name': name,
         'email': email,
         'password': password,

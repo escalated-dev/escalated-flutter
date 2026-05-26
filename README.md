@@ -49,7 +49,7 @@ import 'package:escalated/escalated.dart';
 
 EscalatedPlugin(
   config: EscalatedConfig(
-    apiBaseUrl: 'https://yourapp.com/support/api/v1',
+    apiBaseUrl: 'https://yourapp.com/support/api/v1/mobile',
   ),
   child: MaterialApp.router(...),
 )
@@ -63,7 +63,7 @@ That's it — your app now has a full support ticket UI.
 
 ```dart
 EscalatedConfig(
-  apiBaseUrl: 'https://yourapp.com/support/api/v1',
+  apiBaseUrl: 'https://yourapp.com/support/api/v1/mobile',
   authHooks: myAuthHooks,
   primaryColor: Color(0xFF4F46E5),
   borderRadius: 12.0,
@@ -134,7 +134,7 @@ Auth hooks let you override default authentication behavior to integrate with yo
 
 ```dart
 EscalatedConfig(
-  apiBaseUrl: 'https://yourapp.com/support/api/v1',
+  apiBaseUrl: 'https://yourapp.com/support/api/v1/mobile',
   authHooks: EscalatedAuthHooks(
     onLogin: (email, password) async {
       // Your custom login logic
