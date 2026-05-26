@@ -6,10 +6,7 @@ class TicketStatusField {
   final String value;
   final String label;
 
-  const TicketStatusField({
-    required this.value,
-    required this.label,
-  });
+  const TicketStatusField({required this.value, required this.label});
 
   factory TicketStatusField.fromJson(Map<String, dynamic> json) {
     return TicketStatusField(
@@ -19,10 +16,7 @@ class TicketStatusField {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'value': value,
-      'label': label,
-    };
+    return {'value': value, 'label': label};
   }
 }
 
@@ -82,17 +76,14 @@ class TicketAssigneeDetail {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'email': email,
-    };
+    return {'id': id, 'name': name, 'email': email};
   }
 }
 
 class Ticket {
   final int id;
   final String reference;
+  final String? guestAccessToken;
   final String subject;
   final String description;
   final TicketStatusField status;
@@ -116,6 +107,7 @@ class Ticket {
   const Ticket({
     required this.id,
     required this.reference,
+    this.guestAccessToken,
     required this.subject,
     required this.description,
     required this.status,
@@ -138,38 +130,50 @@ class Ticket {
   });
 
   factory Ticket.fromJson(Map<String, dynamic> json) {
+    final statusJson = Map<String, dynamic>.from(
+      (json['status'] as Map?) ?? const <String, dynamic>{},
+    );
+    final priorityJson = Map<String, dynamic>.from(
+      (json['priority'] as Map?) ?? const <String, dynamic>{},
+    );
+    final requesterJson = Map<String, dynamic>.from(
+      (json['requester'] as Map?) ?? const <String, dynamic>{},
+    );
+
     return Ticket(
       id: json['id'] as int,
       reference: json['reference'] as String,
+      guestAccessToken: json['guest_access_token'] as String?,
       subject: json['subject'] as String,
       description: json['description'] as String? ?? '',
-      status:
-          TicketStatusField.fromJson(json['status'] as Map<String, dynamic>),
-      priority:
-          TicketStatusField.fromJson(json['priority'] as Map<String, dynamic>),
+      status: TicketStatusField.fromJson(statusJson),
+      priority: TicketStatusField.fromJson(priorityJson),
       channel: json['channel'] as String? ?? 'web',
-      metadata: json['metadata'] as Map<String, dynamic>? ?? {},
-      requester:
-          TicketRequester.fromJson(json['requester'] as Map<String, dynamic>),
+      metadata: Map<String, dynamic>.from(
+        (json['metadata'] as Map?) ?? const <String, dynamic>{},
+      ),
+      requester: TicketRequester.fromJson(requesterJson),
       assignee: json['assignee'] != null
           ? TicketAssigneeDetail.fromJson(
-              json['assignee'] as Map<String, dynamic>)
+              Map<String, dynamic>.from(json['assignee'] as Map),
+            )
           : null,
       department: json['department'] != null
           ? TicketDepartment.fromJson(
-              json['department'] as Map<String, dynamic>)
+              Map<String, dynamic>.from(json['department'] as Map),
+            )
           : null,
       tags: (json['tags'] as List<dynamic>?)
-              ?.map((t) => Tag.fromJson(t as Map<String, dynamic>))
+              ?.map((t) => Tag.fromJson(Map<String, dynamic>.from(t as Map)))
               .toList() ??
           [],
       replies: (json['replies'] as List<dynamic>?)
-              ?.map((r) => Reply.fromJson(r as Map<String, dynamic>))
+              ?.map((r) => Reply.fromJson(Map<String, dynamic>.from(r as Map)))
               .toList() ??
           [],
       activities: json['activities'] as List<dynamic>? ?? [],
       sla: json['sla'] != null
-          ? TicketSla.fromJson(json['sla'] as Map<String, dynamic>)
+          ? TicketSla.fromJson(Map<String, dynamic>.from(json['sla'] as Map))
           : null,
       isFollowing: json['is_following'] as bool? ?? false,
       followersCount: json['followers_count'] as int? ?? 0,
@@ -188,6 +192,7 @@ class Ticket {
     return {
       'id': id,
       'reference': reference,
+      if (guestAccessToken != null) 'guest_access_token': guestAccessToken,
       'subject': subject,
       'description': description,
       'status': status.toJson(),
@@ -213,4 +218,5 @@ class Ticket {
   bool get isResolved => status.value == 'resolved';
   bool get isClosed => status.value == 'closed';
   bool get isOpen => status.value == 'open';
+  String get guestRouteReference => guestAccessToken ?? reference;
 }

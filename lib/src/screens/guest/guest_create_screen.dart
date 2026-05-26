@@ -80,7 +80,7 @@ class _GuestCreateScreenState extends ConsumerState<GuestCreateScreen> {
       );
 
       if (mounted) {
-        context.go('/guest/${ticket.reference}');
+        context.go('/guest/${ticket.guestRouteReference}');
       }
     } catch (e) {
       if (mounted) {

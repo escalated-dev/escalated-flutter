@@ -4,7 +4,6 @@ import 'escalated_config.dart';
 import 'providers/auth_provider.dart';
 import 'providers/theme_provider.dart';
 import 'services/api_client.dart';
-import 'services/auth_hooks.dart';
 
 /// An [InheritedWidget] that provides [EscalatedConfig] to the widget tree.
 ///
@@ -15,7 +14,7 @@ import 'services/auth_hooks.dart';
 /// ```dart
 /// EscalatedPlugin(
 ///   config: EscalatedConfig(
-///     apiBaseUrl: 'https://example.com/support/api/v1',
+///     apiBaseUrl: 'https://example.com/support/api/v1/mobile',
 ///   ),
 ///   child: MaterialApp.router(
 ///     routerConfig: yourRouter,

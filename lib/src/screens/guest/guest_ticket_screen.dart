@@ -45,11 +45,9 @@ class _GuestTicketScreenState extends ConsumerState<GuestTicketScreen> {
     final email = _emailController.text.trim();
     if (body.isEmpty || email.isEmpty) return;
 
-    final success = await ref.read(guestTicketProvider.notifier).sendReply(
-          reference: widget.reference,
-          body: body,
-          email: email,
-        );
+    final success = await ref
+        .read(guestTicketProvider.notifier)
+        .sendReply(reference: widget.reference, body: body, email: email);
 
     if (success && mounted) {
       _replyController.clear();
@@ -59,20 +57,19 @@ class _GuestTicketScreenState extends ConsumerState<GuestTicketScreen> {
   void _copyLink() {
     final link = 'escalated://guest/${widget.reference}';
     Clipboard.setData(ClipboardData(text: link));
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Link copied to clipboard')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Link copied to clipboard')));
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final state = ref.watch(guestTicketProvider);
+    final title = state.ticket?.reference ?? l10n.t('ticket');
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.reference),
-      ),
+      appBar: AppBar(title: Text(title)),
       body: _buildBody(state, l10n),
     );
   }
@@ -85,9 +82,8 @@ class _GuestTicketScreenState extends ConsumerState<GuestTicketScreen> {
     if (state.error != null && state.ticket == null) {
       return ErrorView(
         message: state.error,
-        onRetry: () => ref
-            .read(guestTicketProvider.notifier)
-            .loadTicket(widget.reference),
+        onRetry: () =>
+            ref.read(guestTicketProvider.notifier).loadTicket(widget.reference),
       );
     }
 
@@ -112,12 +108,16 @@ class _GuestTicketScreenState extends ConsumerState<GuestTicketScreen> {
                     color: AppColors.statusOpen.withOpacity(0.08),
                     borderRadius: AppRadius.cardBorder,
                     border: Border.all(
-                        color: AppColors.statusOpen.withOpacity(0.2)),
+                      color: AppColors.statusOpen.withOpacity(0.2),
+                    ),
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.bookmark_outline,
-                          color: AppColors.statusOpen, size: 20),
+                      Icon(
+                        Icons.bookmark_outline,
+                        color: AppColors.statusOpen,
+                        size: 20,
+                      ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
@@ -289,8 +289,7 @@ class _GuestTicketScreenState extends ConsumerState<GuestTicketScreen> {
               color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
               border: Border(
                 top: BorderSide(
-                  color:
-                      isDark ? AppColors.borderDark : AppColors.borderLight,
+                  color: isDark ? AppColors.borderDark : AppColors.borderLight,
                 ),
               ),
             ),
@@ -388,10 +387,7 @@ class _MetaRow extends StatelessWidget {
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-              ),
+              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
             ),
           ),
         ],

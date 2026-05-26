@@ -4,12 +4,38 @@ import 'colors.dart';
 class AppTheme {
   AppTheme._();
 
+  static dynamic _cardTheme({
+    required Color color,
+    required Color borderColor,
+    required BorderRadiusGeometry borderRadius,
+  }) {
+    final dynamic cardTheme = CardTheme(
+      color: color,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: borderRadius,
+        side: BorderSide(color: borderColor),
+      ),
+    );
+
+    try {
+      return cardTheme.data;
+    } catch (_) {
+      return cardTheme;
+    }
+  }
+
   static ThemeData light({Color? primaryColor, double? borderRadius}) {
     final primary = primaryColor ?? AppColors.primary;
     final primaryLight = primaryColor != null
-        ? HSLColor.fromColor(primaryColor).withLightness(
-            (HSLColor.fromColor(primaryColor).lightness + 0.1).clamp(0.0, 1.0),
-          ).toColor()
+        ? HSLColor.fromColor(primaryColor)
+            .withLightness(
+              (HSLColor.fromColor(primaryColor).lightness + 0.1).clamp(
+                0.0,
+                1.0,
+              ),
+            )
+            .toColor()
         : AppColors.primaryLight;
     final baseBorder = borderRadius != null
         ? BorderRadius.circular(borderRadius)
@@ -40,13 +66,10 @@ class AppTheme {
         scrolledUnderElevation: 1,
         centerTitle: false,
       ),
-      cardTheme: CardTheme(
+      cardTheme: _cardTheme(
         color: AppColors.surfaceLight,
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: cardBorder,
-          side: const BorderSide(color: AppColors.borderLight),
-        ),
+        borderColor: AppColors.borderLight,
+        borderRadius: cardBorder,
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
@@ -82,13 +105,8 @@ class AppTheme {
             horizontal: AppSpacing.xl,
             vertical: AppSpacing.md,
           ),
-          shape: RoundedRectangleBorder(
-            borderRadius: baseBorder,
-          ),
-          textStyle: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
+          shape: RoundedRectangleBorder(borderRadius: baseBorder),
+          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
@@ -99,15 +117,11 @@ class AppTheme {
             horizontal: AppSpacing.xl,
             vertical: AppSpacing.md,
           ),
-          shape: RoundedRectangleBorder(
-            borderRadius: baseBorder,
-          ),
+          shape: RoundedRectangleBorder(borderRadius: baseBorder),
         ),
       ),
       textButtonTheme: TextButtonThemeData(
-        style: TextButton.styleFrom(
-          foregroundColor: primary,
-        ),
+        style: TextButton.styleFrom(foregroundColor: primary),
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: primary,
@@ -126,9 +140,7 @@ class AppTheme {
         thickness: 1,
       ),
       chipTheme: ChipThemeData(
-        shape: RoundedRectangleBorder(
-          borderRadius: badgeBorder,
-        ),
+        shape: RoundedRectangleBorder(borderRadius: badgeBorder),
       ),
     );
   }
@@ -136,9 +148,14 @@ class AppTheme {
   static ThemeData dark({Color? primaryColor, double? borderRadius}) {
     final primary = primaryColor ?? AppColors.primary;
     final primaryLight = primaryColor != null
-        ? HSLColor.fromColor(primaryColor).withLightness(
-            (HSLColor.fromColor(primaryColor).lightness + 0.1).clamp(0.0, 1.0),
-          ).toColor()
+        ? HSLColor.fromColor(primaryColor)
+            .withLightness(
+              (HSLColor.fromColor(primaryColor).lightness + 0.1).clamp(
+                0.0,
+                1.0,
+              ),
+            )
+            .toColor()
         : AppColors.primaryLight;
     final baseBorder = borderRadius != null
         ? BorderRadius.circular(borderRadius)
@@ -169,13 +186,10 @@ class AppTheme {
         scrolledUnderElevation: 1,
         centerTitle: false,
       ),
-      cardTheme: CardTheme(
+      cardTheme: _cardTheme(
         color: AppColors.surfaceDark,
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: cardBorder,
-          side: const BorderSide(color: AppColors.borderDark),
-        ),
+        borderColor: AppColors.borderDark,
+        borderRadius: cardBorder,
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
@@ -211,13 +225,8 @@ class AppTheme {
             horizontal: AppSpacing.xl,
             vertical: AppSpacing.md,
           ),
-          shape: RoundedRectangleBorder(
-            borderRadius: baseBorder,
-          ),
-          textStyle: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
+          shape: RoundedRectangleBorder(borderRadius: baseBorder),
+          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
@@ -228,15 +237,11 @@ class AppTheme {
             horizontal: AppSpacing.xl,
             vertical: AppSpacing.md,
           ),
-          shape: RoundedRectangleBorder(
-            borderRadius: baseBorder,
-          ),
+          shape: RoundedRectangleBorder(borderRadius: baseBorder),
         ),
       ),
       textButtonTheme: TextButtonThemeData(
-        style: TextButton.styleFrom(
-          foregroundColor: primaryLight,
-        ),
+        style: TextButton.styleFrom(foregroundColor: primaryLight),
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: primaryLight,
@@ -255,9 +260,7 @@ class AppTheme {
         thickness: 1,
       ),
       chipTheme: ChipThemeData(
-        shape: RoundedRectangleBorder(
-          borderRadius: badgeBorder,
-        ),
+        shape: RoundedRectangleBorder(borderRadius: badgeBorder),
       ),
     );
   }
