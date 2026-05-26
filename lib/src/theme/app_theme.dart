@@ -4,6 +4,27 @@ import 'colors.dart';
 class AppTheme {
   AppTheme._();
 
+  static dynamic _cardTheme({
+    required Color color,
+    required Color borderColor,
+    required BorderRadiusGeometry borderRadius,
+  }) {
+    final dynamic cardTheme = CardTheme(
+      color: color,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: borderRadius,
+        side: BorderSide(color: borderColor),
+      ),
+    );
+
+    try {
+      return cardTheme.data;
+    } catch (_) {
+      return cardTheme;
+    }
+  }
+
   static ThemeData light({Color? primaryColor, double? borderRadius}) {
     final primary = primaryColor ?? AppColors.primary;
     final primaryLight = primaryColor != null
@@ -45,13 +66,10 @@ class AppTheme {
         scrolledUnderElevation: 1,
         centerTitle: false,
       ),
-      cardTheme: CardThemeData(
+      cardTheme: _cardTheme(
         color: AppColors.surfaceLight,
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: cardBorder,
-          side: const BorderSide(color: AppColors.borderLight),
-        ),
+        borderColor: AppColors.borderLight,
+        borderRadius: cardBorder,
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
@@ -168,13 +186,10 @@ class AppTheme {
         scrolledUnderElevation: 1,
         centerTitle: false,
       ),
-      cardTheme: CardThemeData(
+      cardTheme: _cardTheme(
         color: AppColors.surfaceDark,
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: cardBorder,
-          side: const BorderSide(color: AppColors.borderDark),
-        ),
+        borderColor: AppColors.borderDark,
+        borderRadius: cardBorder,
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
