@@ -108,15 +108,15 @@ class _ReplyCard extends StatelessWidget {
             data: reply.body,
             style: {
               'body': Style(
-                margin: EdgeInsets.zero,
-                padding: EdgeInsets.zero,
+                margin: Margins.zero,
+                padding: HtmlPaddings.zero,
                 fontSize: FontSize(14),
                 color: isDark
                     ? AppColors.textPrimaryDark
                     : AppColors.textPrimaryLight,
               ),
               'p': Style(
-                margin: const EdgeInsets.only(bottom: 8),
+                margin: Margins.only(bottom: 8),
               ),
               'a': Style(
                 color: AppColors.primary,
