@@ -35,26 +35,38 @@ class FileDropzone extends StatelessWidget {
 
   Future<void> _pickFiles() async {
     try {
-      final result = await FilePicker.platform.pickFiles(
-        allowMultiple: true,
-        type: FileType.any,
-      );
+      // file_picker broke this call three times between v8 and v12:
+      //   v11 removed the FilePicker.platform instance getter and promoted
+      //       pickFiles to a static;
+      //   v12 returns List<PlatformFile> directly instead of a nullable
+      //       FilePickerResult wrapper, so cancelling yields an empty list
+      //       rather than null;
+      //   v12 also replaced PlatformFile.size (sync int) with length()
+      //       (async), which is why this builds the list in a loop.
+      // allowMultiple is deprecated in v12 and defaults to true, which is what
+      // this dropzone wants.
+      final picked = await FilePicker.pickFiles(type: FileType.any);
 
-      if (result != null) {
-        final newFiles = result.files.where((f) => f.path != null).map((f) {
-          return SelectedFile(
-            name: f.name,
-            path: f.path!,
-            size: f.size,
-          );
-        }).toList();
+      final newFiles = <SelectedFile>[];
 
+      for (final file in picked) {
+        final path = file.path;
+
+        // Non-local picks (blob/data URIs on web) have no path to upload from.
+        if (path == null) continue;
+
+        newFiles.add(SelectedFile(
+          name: file.name,
+          path: path,
+          size: await file.length(),
+        ));
+      }
+
+      if (newFiles.isNotEmpty) {
         final combined = [...files, ...newFiles];
-        if (combined.length > maxFiles) {
-          onFilesChanged(combined.take(maxFiles).toList());
-        } else {
-          onFilesChanged(combined);
-        }
+        onFilesChanged(
+          combined.length > maxFiles ? combined.take(maxFiles).toList() : combined,
+        );
       }
     } catch (_) {
       // Handle picker error silently
