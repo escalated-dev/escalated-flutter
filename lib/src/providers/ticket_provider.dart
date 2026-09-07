@@ -1,5 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+// Riverpod 3 moved StateNotifier/StateNotifierProvider out of the default
+// export and into legacy.dart. They are still supported; see the note on
+// migrating these notifiers to Notifier/NotifierProvider in the README.
+import 'package:flutter_riverpod/legacy.dart';
 import '../models/ticket.dart';
 import '../models/ticket_summary.dart';
 import 'auth_provider.dart';
