@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+// Riverpod 3 moved StateNotifier/StateNotifierProvider out of the default
+// export and into legacy.dart. They are still supported; see the note on
+// migrating these notifiers to Notifier/NotifierProvider in the README.
+// This file uses nothing from the main export, so it imports only legacy.
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class ThemeState {

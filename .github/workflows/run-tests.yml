@@ -16,7 +16,9 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.38.x'
+          # Must ship Dart >= 3.12, which flutter_riverpod 3.4.x requires.
+          # 3.38.10 ships Dart 3.10.9 and cannot resolve it.
+          flutter-version: '3.44.x'
           channel: stable
 
       - run: flutter pub get

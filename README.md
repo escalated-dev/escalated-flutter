@@ -124,6 +124,21 @@ Escalated uses Riverpod for state management. Four providers are available:
 | `kbProvider` | Knowledge base articles and search |
 | `themeProvider` | Theme configuration (colors, dark mode, locale) |
 
+### Riverpod 3 and the legacy import
+
+These providers are built on `StateNotifier`. Riverpod 3 moved `StateNotifier`
+and `StateNotifierProvider` out of the default export into
+`package:flutter_riverpod/legacy.dart`, where they remain supported, so the
+provider files import from there.
+
+They are legacy for a reason and the intended destination is
+`Notifier`/`NotifierProvider`. That rewrite is deliberately not bundled with the
+Riverpod 3 upgrade: it changes when initial state is produced (a `Notifier`
+returns it from `build()` rather than a constructor, so constructor side effects
+like `checkAuth()` have to be re-homed), and this package currently ships two
+tests -- not enough of a net to catch a behaviour change in seven notifiers.
+Widget coverage first, then the rewrite.
+
 ## Models
 
 Nine models with full `fromJson` / `toJson` serialization are included for use with the REST API. All models map directly to the Escalated API response format.
