@@ -4,6 +4,7 @@
 [![Flutter](https://img.shields.io/badge/flutter-3.x-02569B?logo=flutter&logoColor=white)](https://flutter.dev/)
 [![Dart](https://img.shields.io/badge/dart-3.x-0175C2?logo=dart&logoColor=white)](https://dart.dev/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Views](https://hits.sh/github.com/escalated-dev/escalated-flutter.svg?style=flat&label=views&color=007ec6)](https://hits.sh/github.com/escalated-dev/escalated-flutter/)
 
 A full-featured, embeddable support ticket UI for Flutter apps. Drop it into any Flutter project — get a complete customer-facing helpdesk with ticket management, knowledge base, guest access, and SLA tracking. Connects to the Escalated REST API.
 
