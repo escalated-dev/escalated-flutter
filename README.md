@@ -217,4 +217,4 @@ Same architecture, same REST API, same support experience — for every major fr
 
 ## License
 
-MIT
+MIT - Copyright (c) Escalated.dev. See [LICENSE](LICENSE).
