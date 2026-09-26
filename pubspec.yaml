@@ -1,4 +1,4 @@
-﻿name: escalated
+name: escalated
 description: A Flutter library package for customer support ticket management. Provides pre-built screens, widgets, and services for integrating a full support ticket system into any Flutter app.
 version: 1.0.1
 homepage: https://github.com/escalated-dev/escalated
