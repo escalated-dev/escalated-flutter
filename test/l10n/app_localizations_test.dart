@@ -78,6 +78,49 @@ void main() {
     test('fr_CA only overrides keys that exist', () {
       expect(frCA.keys.where((k) => !en.containsKey(k)), isEmpty);
     });
+
+    // UI copy is sentence case: only the first word of each sentence is
+    // capitalised, plus acronyms such as SLA. German is left out because its
+    // nouns are capitalised by grammar.
+    bool startsUpper(String word) =>
+        word.isNotEmpty &&
+        word[0] != word[0].toLowerCase() &&
+        word != word.toUpperCase();
+
+    final sentenceCase = {'en': en, 'fr': fr, 'fr_CA': frCA, 'es': es};
+    for (final entry in sentenceCase.entries) {
+      test('${entry.key} uses sentence case', () {
+        final offenders = <String>[];
+        entry.value.forEach((key, value) {
+          final sentences = value.split(RegExp(r'(?<=[.!?])\s+'));
+          final titleCased = sentences.any(
+            (sentence) =>
+                sentence.split(RegExp("[\\s'’]+")).skip(1).any(startsUpper),
+          );
+          if (titleCased) offenders.add('$key: $value');
+        });
+        expect(offenders, isEmpty);
+      });
+    }
+
+    test('keeps the strings hosts show most in sentence case', () {
+      expect(
+        AppLocalizations(const Locale('en')).t('new_ticket'),
+        'New ticket',
+      );
+      expect(
+        AppLocalizations(const Locale('fr')).t('attachments'),
+        'Pièces jointes',
+      );
+      expect(
+        AppLocalizations(const Locale('fr', 'CA')).t('create_ticket'),
+        'Créer un ticket',
+      );
+      expect(
+        AppLocalizations(const Locale('de')).t('not_helpful'),
+        'Nicht hilfreich',
+      );
+    });
   });
 
   group('serverMessageOr', () {

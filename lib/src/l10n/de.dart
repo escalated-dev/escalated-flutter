@@ -70,7 +70,7 @@ const Map<String, String> de = {
   // KB
   'search_articles': 'Artikel suchen...',
   'helpful': 'Hilfreich',
-  'not_helpful': 'Nicht Hilfreich',
+  'not_helpful': 'Nicht hilfreich',
   'related_articles': 'Verwandte Artikel',
   'no_articles': 'Keine Artikel gefunden',
   'views': 'Aufrufe',
