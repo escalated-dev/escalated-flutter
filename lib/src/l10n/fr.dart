@@ -1,7 +1,7 @@
 const Map<String, String> fr = {
   // Navigation
   'tickets': 'Tickets',
-  'knowledge_base': 'Base de Connaissances',
+  'knowledge_base': 'Base de connaissances',
   'settings': 'Param\u00e8tres',
   'login': 'Connexion',
   'register': "S'inscrire",
@@ -9,9 +9,9 @@ const Map<String, String> fr = {
 
   // Statuses
   'open': 'Ouvert',
-  'in_progress': 'En Cours',
-  'waiting_on_customer': 'En Attente du Client',
-  'waiting_on_agent': "En Attente de l'Agent",
+  'in_progress': 'En cours',
+  'waiting_on_customer': 'En attente du client',
+  'waiting_on_agent': "En attente de l'agent",
   'escalated': 'Escalad\u00e9',
   'resolved': 'R\u00e9solu',
   'closed': 'Ferm\u00e9',
@@ -35,33 +35,33 @@ const Map<String, String> fr = {
   'description': 'Description',
   'no_tickets': 'Aucun ticket trouv\u00e9',
   'details': 'D\u00e9tails',
-  'close_ticket': 'Fermer le Ticket',
-  'reopen_ticket': 'Rouvrir le Ticket',
-  'create_ticket': 'Cr\u00e9er un Ticket',
-  'new_ticket': 'Nouveau Ticket',
+  'close_ticket': 'Fermer le ticket',
+  'reopen_ticket': 'Rouvrir le ticket',
+  'create_ticket': 'Cr\u00e9er un ticket',
+  'new_ticket': 'Nouveau ticket',
 
   // Reply
   'reply': 'R\u00e9ponse',
-  'send_reply': 'Envoyer la R\u00e9ponse',
+  'send_reply': 'Envoyer la r\u00e9ponse',
   'write_reply': '\u00c9crivez votre r\u00e9ponse...',
-  'attachments': 'Pi\u00e8ces Jointes',
-  'internal_note': 'Note Interne',
+  'attachments': 'Pi\u00e8ces jointes',
+  'internal_note': 'Note interne',
 
   // Rating
-  'customer_rating': '\u00c9valuation du Client',
+  'customer_rating': '\u00c9valuation du client',
   'how_was_experience': 'Comment \u00e9tait votre exp\u00e9rience ?',
   'terrible': 'Terrible',
   'poor': 'Mauvaise',
   'okay': 'Correcte',
   'good': 'Bonne',
   'excellent': 'Excellente',
-  'submit_rating': "Soumettre l'\u00c9valuation",
+  'submit_rating': "Soumettre l'\u00e9valuation",
   'thank_you_feedback': 'Merci pour votre retour !',
 
   // SLA
-  'overdue': 'En Retard',
-  'breached': 'Non Respect\u00e9',
-  'first_response': 'Premi\u00e8re R\u00e9ponse',
+  'overdue': 'En retard',
+  'breached': 'Non respect\u00e9',
+  'first_response': 'Premi\u00e8re r\u00e9ponse',
   'resolution': 'R\u00e9solution',
   'due_in': '\u00c9ch\u00e9ance dans',
   'hours': 'heures',
@@ -70,29 +70,29 @@ const Map<String, String> fr = {
   // KB
   'search_articles': 'Rechercher des articles...',
   'helpful': 'Utile',
-  'not_helpful': 'Pas Utile',
-  'related_articles': 'Articles Connexes',
+  'not_helpful': 'Pas utile',
+  'related_articles': 'Articles connexes',
   'no_articles': 'Aucun article trouv\u00e9',
   'views': 'vues',
   'published': 'Publi\u00e9',
 
   // Guest
-  'submit_ticket': 'Soumettre le Ticket',
-  'your_name': 'Votre Nom',
-  'your_email': 'Votre Email',
+  'submit_ticket': 'Soumettre le ticket',
+  'your_name': 'Votre nom',
+  'your_email': 'Votre email',
   'bookmark_notice':
       'Ajoutez cette page \u00e0 vos favoris pour v\u00e9rifier le statut de votre ticket plus tard.',
-  'copy_link': 'Copier le Lien',
-  'sign_in': 'Se Connecter',
+  'copy_link': 'Copier le lien',
+  'sign_in': 'Se connecter',
 
   // Filters
   'search_tickets': 'Rechercher des tickets...',
-  'all_statuses': 'Tous les Statuts',
-  'all_priorities': 'Toutes les Priorit\u00e9s',
+  'all_statuses': 'Tous les statuts',
+  'all_priorities': 'Toutes les priorit\u00e9s',
   'filter': 'Filtrer',
 
   // Files
-  'browse_files': 'Parcourir les Fichiers',
+  'browse_files': 'Parcourir les fichiers',
   'drop_or_browse': 'Appuyez pour s\u00e9lectionner des fichiers',
   'remove': 'Supprimer',
   'download': 'T\u00e9l\u00e9charger',
@@ -109,14 +109,14 @@ const Map<String, String> fr = {
 
   // Auth
   'email': 'Email',
-  'password': 'Mot de Passe',
-  'confirm_password': 'Confirmer le Mot de Passe',
+  'password': 'Mot de passe',
+  'confirm_password': 'Confirmer le mot de passe',
   'name': 'Nom',
   'forgot_password': 'Mot de passe oubli\u00e9 ?',
-  'create_account': 'Cr\u00e9er un Compte',
+  'create_account': 'Cr\u00e9er un compte',
   'already_have_account': 'Vous avez d\u00e9j\u00e0 un compte ?',
-  'login_title': 'Bon Retour',
-  'register_title': 'Cr\u00e9ez Votre Compte',
+  'login_title': 'Bon retour',
+  'register_title': 'Cr\u00e9ez votre compte',
 
   // Settings
   'appearance': 'Apparence',
@@ -125,7 +125,7 @@ const Map<String, String> fr = {
   'dark': 'Sombre',
   'system': 'Syst\u00e8me',
   'language': 'Langue',
-  'confirm_logout': 'Se D\u00e9connecter',
+  'confirm_logout': 'Se d\u00e9connecter',
   'confirm_logout_message':
       '\u00cates-vous s\u00fbr de vouloir vous d\u00e9connecter ?',
 

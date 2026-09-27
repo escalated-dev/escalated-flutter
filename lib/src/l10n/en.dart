@@ -1,7 +1,7 @@
 const Map<String, String> en = {
   // Navigation
   'tickets': 'Tickets',
-  'knowledge_base': 'Knowledge Base',
+  'knowledge_base': 'Knowledge base',
   'settings': 'Settings',
   'login': 'Login',
   'register': 'Register',
@@ -9,9 +9,9 @@ const Map<String, String> en = {
 
   // Statuses
   'open': 'Open',
-  'in_progress': 'In Progress',
-  'waiting_on_customer': 'Waiting on Customer',
-  'waiting_on_agent': 'Waiting on Agent',
+  'in_progress': 'In progress',
+  'waiting_on_customer': 'Waiting on customer',
+  'waiting_on_agent': 'Waiting on agent',
   'escalated': 'Escalated',
   'resolved': 'Resolved',
   'closed': 'Closed',
@@ -35,33 +35,33 @@ const Map<String, String> en = {
   'description': 'Description',
   'no_tickets': 'No tickets found',
   'details': 'Details',
-  'close_ticket': 'Close Ticket',
-  'reopen_ticket': 'Reopen Ticket',
-  'create_ticket': 'Create Ticket',
-  'new_ticket': 'New Ticket',
+  'close_ticket': 'Close ticket',
+  'reopen_ticket': 'Reopen ticket',
+  'create_ticket': 'Create ticket',
+  'new_ticket': 'New ticket',
 
   // Reply
   'reply': 'Reply',
-  'send_reply': 'Send Reply',
+  'send_reply': 'Send reply',
   'write_reply': 'Write your reply...',
   'attachments': 'Attachments',
-  'internal_note': 'Internal Note',
+  'internal_note': 'Internal note',
 
   // Rating
-  'customer_rating': 'Customer Rating',
+  'customer_rating': 'Customer rating',
   'how_was_experience': 'How was your experience?',
   'terrible': 'Terrible',
   'poor': 'Poor',
   'okay': 'Okay',
   'good': 'Good',
   'excellent': 'Excellent',
-  'submit_rating': 'Submit Rating',
+  'submit_rating': 'Submit rating',
   'thank_you_feedback': 'Thank you for your feedback!',
 
   // SLA
   'overdue': 'Overdue',
   'breached': 'Breached',
-  'first_response': 'First Response',
+  'first_response': 'First response',
   'resolution': 'Resolution',
   'due_in': 'Due in',
   'hours': 'hours',
@@ -70,28 +70,28 @@ const Map<String, String> en = {
   // KB
   'search_articles': 'Search articles...',
   'helpful': 'Helpful',
-  'not_helpful': 'Not Helpful',
-  'related_articles': 'Related Articles',
+  'not_helpful': 'Not helpful',
+  'related_articles': 'Related articles',
   'no_articles': 'No articles found',
   'views': 'views',
   'published': 'Published',
 
   // Guest
-  'submit_ticket': 'Submit Ticket',
-  'your_name': 'Your Name',
-  'your_email': 'Your Email',
+  'submit_ticket': 'Submit ticket',
+  'your_name': 'Your name',
+  'your_email': 'Your email',
   'bookmark_notice': 'Bookmark this page to check your ticket status later.',
-  'copy_link': 'Copy Link',
-  'sign_in': 'Sign In',
+  'copy_link': 'Copy link',
+  'sign_in': 'Sign in',
 
   // Filters
   'search_tickets': 'Search tickets...',
-  'all_statuses': 'All Statuses',
-  'all_priorities': 'All Priorities',
+  'all_statuses': 'All statuses',
+  'all_priorities': 'All priorities',
   'filter': 'Filter',
 
   // Files
-  'browse_files': 'Browse Files',
+  'browse_files': 'Browse files',
   'drop_or_browse': 'Tap to select files',
   'remove': 'Remove',
   'download': 'Download',
@@ -109,13 +109,13 @@ const Map<String, String> en = {
   // Auth
   'email': 'Email',
   'password': 'Password',
-  'confirm_password': 'Confirm Password',
+  'confirm_password': 'Confirm password',
   'name': 'Name',
-  'forgot_password': 'Forgot Password?',
-  'create_account': 'Create Account',
+  'forgot_password': 'Forgot password?',
+  'create_account': 'Create account',
   'already_have_account': 'Already have an account?',
-  'login_title': 'Welcome Back',
-  'register_title': 'Create Your Account',
+  'login_title': 'Welcome back',
+  'register_title': 'Create your account',
 
   // Settings
   'appearance': 'Appearance',
@@ -124,7 +124,7 @@ const Map<String, String> en = {
   'dark': 'Dark',
   'system': 'System',
   'language': 'Language',
-  'confirm_logout': 'Log Out',
+  'confirm_logout': 'Log out',
   'confirm_logout_message': 'Are you sure you want to log out?',
 
   // Messages
