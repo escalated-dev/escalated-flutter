@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers/ticket_provider.dart';
 import '../../theme/colors.dart';
@@ -19,8 +18,7 @@ class TicketDetailScreen extends ConsumerStatefulWidget {
   const TicketDetailScreen({super.key, required this.reference});
 
   @override
-  ConsumerState<TicketDetailScreen> createState() =>
-      _TicketDetailScreenState();
+  ConsumerState<TicketDetailScreen> createState() => _TicketDetailScreenState();
 }
 
 class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
@@ -38,9 +36,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
     final state = ref.watch(ticketDetailProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.reference),
-      ),
+      appBar: AppBar(title: Text(widget.reference)),
       body: _buildBody(state, l10n),
     );
   }
@@ -64,8 +60,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
       return const ShimmerCard();
     }
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final dateFormat = DateFormat('MMM d, y · h:mm a');
+    final scheme = Theme.of(context).colorScheme;
 
     return Column(
       children: [
@@ -105,14 +100,9 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: isDark
-                        ? Colors.white.withOpacity(0.03)
-                        : Colors.grey.withOpacity(0.04),
+                    color: scheme.surfaceContainerLow,
                     borderRadius: AppRadius.cardBorder,
-                    border: Border.all(
-                      color:
-                          isDark ? AppColors.borderDark : AppColors.borderLight,
-                    ),
+                    border: Border.all(color: scheme.outlineVariant),
                   ),
                   child: Column(
                     children: [
@@ -135,7 +125,10 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                       _MetaRow(
                         icon: Icons.schedule,
                         label: l10n.t('created'),
-                        value: dateFormat.format(ticket.createdAt.toLocal()),
+                        value: AppLocalizations.formatDateTime(
+                          context,
+                          ticket.createdAt,
+                        ),
                       ),
                     ],
                   ),
@@ -176,24 +169,16 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                     width: double.infinity,
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: isDark
-                          ? Colors.white.withOpacity(0.03)
-                          : Colors.grey.withOpacity(0.04),
+                      color: scheme.surfaceContainerLow,
                       borderRadius: AppRadius.cardBorder,
-                      border: Border.all(
-                        color: isDark
-                            ? AppColors.borderDark
-                            : AppColors.borderLight,
-                      ),
+                      border: Border.all(color: scheme.outlineVariant),
                     ),
                     child: Text(
                       ticket.description,
                       style: TextStyle(
                         fontSize: 14,
                         height: 1.5,
-                        color: isDark
-                            ? AppColors.textPrimaryDark
-                            : AppColors.textPrimaryLight,
+                        color: scheme.onSurface,
                       ),
                     ),
                   ),
@@ -261,7 +246,9 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                 if (ticket.isResolved) ...[
                   SatisfactionRating(
                     onSubmit: (rating, comment) {
-                      ref.read(ticketDetailProvider.notifier).rateTicket(
+                      ref
+                          .read(ticketDetailProvider.notifier)
+                          .rateTicket(
                             reference: widget.reference,
                             rating: rating,
                             comment: comment,
@@ -276,7 +263,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 12),
                     child: Text(
-                      '${l10n.t('reply')} (${ticket.replies.length})',
+                      '${l10n.t('replies')} (${ticket.replies.length})',
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -294,11 +281,14 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
           ReplyComposer(
             isSending: state.isSendingReply,
             onSend: (body, attachmentPaths) async {
-              await ref.read(ticketDetailProvider.notifier).sendReply(
+              await ref
+                  .read(ticketDetailProvider.notifier)
+                  .sendReply(
                     reference: widget.reference,
                     body: body,
-                    attachmentPaths:
-                        attachmentPaths.isNotEmpty ? attachmentPaths : null,
+                    attachmentPaths: attachmentPaths.isNotEmpty
+                        ? attachmentPaths
+                        : null,
                   );
             },
           ),
@@ -320,39 +310,25 @@ class _MetaRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final scheme = Theme.of(context).colorScheme;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
-          Icon(
-            icon,
-            size: 16,
-            color: isDark
-                ? AppColors.textSecondaryDark
-                : AppColors.textSecondaryLight,
-          ),
+          Icon(icon, size: 16, color: scheme.onSurfaceVariant),
           const SizedBox(width: 8),
           SizedBox(
             width: 90,
             child: Text(
               label,
-              style: TextStyle(
-                fontSize: 13,
-                color: isDark
-                    ? AppColors.textSecondaryDark
-                    : AppColors.textSecondaryLight,
-              ),
+              style: TextStyle(fontSize: 13, color: scheme.onSurfaceVariant),
             ),
           ),
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-              ),
+              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
             ),
           ),
         ],

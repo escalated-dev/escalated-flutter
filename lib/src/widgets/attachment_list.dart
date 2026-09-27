@@ -7,18 +7,14 @@ class AttachmentList extends StatelessWidget {
   final List<Attachment> attachments;
   final void Function(Attachment)? onDownload;
 
-  const AttachmentList({
-    super.key,
-    required this.attachments,
-    this.onDownload,
-  });
+  const AttachmentList({super.key, required this.attachments, this.onDownload});
 
   @override
   Widget build(BuildContext context) {
     if (attachments.isEmpty) return const SizedBox.shrink();
 
     final l10n = AppLocalizations.of(context);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final scheme = Theme.of(context).colorScheme;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -30,16 +26,14 @@ class AttachmentList extends StatelessWidget {
             style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: isDark
-                  ? AppColors.textSecondaryDark
-                  : AppColors.textSecondaryLight,
+              color: scheme.onSurfaceVariant,
             ),
           ),
         ),
-        ...attachments.map((attachment) => _AttachmentTile(
-              attachment: attachment,
-              onDownload: onDownload,
-            )),
+        ...attachments.map(
+          (attachment) =>
+              _AttachmentTile(attachment: attachment, onDownload: onDownload),
+        ),
       ],
     );
   }
@@ -49,27 +43,20 @@ class _AttachmentTile extends StatelessWidget {
   final Attachment attachment;
   final void Function(Attachment)? onDownload;
 
-  const _AttachmentTile({
-    required this.attachment,
-    this.onDownload,
-  });
+  const _AttachmentTile({required this.attachment, this.onDownload});
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final scheme = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 6),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: isDark
-            ? Colors.white.withOpacity(0.04)
-            : Colors.grey.withOpacity(0.06),
+        color: scheme.surfaceContainer,
         borderRadius: AppRadius.baseBorder,
-        border: Border.all(
-          color: isDark ? AppColors.borderDark : AppColors.borderLight,
-        ),
+        border: Border.all(color: scheme.outlineVariant),
       ),
       child: Row(
         children: [
@@ -95,9 +82,7 @@ class _AttachmentTile extends StatelessWidget {
                   attachment.formattedSize,
                   style: TextStyle(
                     fontSize: 11,
-                    color: isDark
-                        ? AppColors.textSecondaryDark
-                        : AppColors.textSecondaryLight,
+                    color: scheme.onSurfaceVariant,
                   ),
                 ),
               ],

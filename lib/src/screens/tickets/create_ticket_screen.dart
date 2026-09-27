@@ -69,8 +69,9 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
         description: _descriptionController.text.trim(),
         priority: _selectedPriority,
         departmentId: _selectedDepartmentId,
-        attachmentPaths:
-            _files.isNotEmpty ? _files.map((f) => f.path).toList() : null,
+        attachmentPaths: _files.isNotEmpty
+            ? _files.map((f) => f.path).toList()
+            : null,
       );
 
       if (mounted) {
@@ -81,8 +82,11 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
         setState(() => _isSubmitting = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to create ticket. Please try again.'),
-            backgroundColor: AppColors.statusEscalated,
+            content: Text(
+              AppLocalizations.of(context).t('failed_to_create_ticket'),
+              style: TextStyle(color: Theme.of(context).colorScheme.onError),
+            ),
+            backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
       }
@@ -94,9 +98,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
     final l10n = AppLocalizations.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.t('new_ticket')),
-      ),
+      appBar: AppBar(title: Text(l10n.t('new_ticket'))),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -113,7 +115,9 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
                 textInputAction: TextInputAction.next,
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return '${l10n.t('subject')} is required';
+                    return l10n.tf('field_required', {
+                      'field': l10n.t('subject'),
+                    });
                   }
                   return null;
                 },
@@ -130,14 +134,16 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
                 textInputAction: TextInputAction.newline,
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return '${l10n.t('description')} is required';
+                    return l10n.tf('field_required', {
+                      'field': l10n.t('description'),
+                    });
                   }
                   return null;
                 },
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
-                value: _selectedPriority,
+                initialValue: _selectedPriority,
                 decoration: InputDecoration(
                   labelText: l10n.t('priority'),
                   prefixIcon: const Icon(Icons.flag_outlined),
@@ -172,7 +178,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
                 const LinearProgressIndicator()
               else if (_departments.isNotEmpty)
                 DropdownButtonFormField<int?>(
-                  value: _selectedDepartmentId,
+                  initialValue: _selectedDepartmentId,
                   decoration: InputDecoration(
                     labelText: l10n.t('department'),
                     prefixIcon: const Icon(Icons.business_outlined),
@@ -181,11 +187,9 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
                     DropdownMenuItem<int?>(
                       value: null,
                       child: Text(
-                        'None',
+                        l10n.t('none'),
                         style: TextStyle(
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? AppColors.textSecondaryDark
-                              : AppColors.textSecondaryLight,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ),
@@ -222,10 +226,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
                       ? const SizedBox(
                           width: 20,
                           height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.white,
-                          ),
+                          child: CircularProgressIndicator(strokeWidth: 2),
                         )
                       : Text(l10n.t('create_ticket')),
                 ),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers/kb_provider.dart';
 import '../../theme/colors.dart';
@@ -33,18 +32,15 @@ class _KbArticleScreenState extends ConsumerState<KbArticleScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final state = ref.watch(articleDetailProvider);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.knowledgeBase),
-      ),
-      body: _buildBody(state, l10n, isDark),
+      appBar: AppBar(title: Text(l10n.knowledgeBase)),
+      body: _buildBody(state, l10n),
     );
   }
 
-  Widget _buildBody(
-      ArticleDetailState state, AppLocalizations l10n, bool isDark) {
+  Widget _buildBody(ArticleDetailState state, AppLocalizations l10n) {
+    final scheme = Theme.of(context).colorScheme;
     if (state.isLoading && state.article == null) {
       return const ShimmerCard();
     }
@@ -60,8 +56,6 @@ class _KbArticleScreenState extends ConsumerState<KbArticleScreen> {
     final article = state.article;
     if (article == null) return const ShimmerCard();
 
-    final dateFormat = DateFormat('MMM d, y');
-
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -72,10 +66,12 @@ class _KbArticleScreenState extends ConsumerState<KbArticleScreen> {
             Padding(
               padding: const EdgeInsets.only(bottom: 8),
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.08),
+                  color: scheme.primary.withValues(alpha: 0.08),
                   borderRadius: AppRadius.badgeBorder,
                 ),
                 child: Text(
@@ -83,7 +79,7 @@ class _KbArticleScreenState extends ConsumerState<KbArticleScreen> {
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.primary,
+                    color: scheme.primary,
                   ),
                 ),
               ),
@@ -92,46 +88,36 @@ class _KbArticleScreenState extends ConsumerState<KbArticleScreen> {
           // Title
           Text(
             article.title,
-            style: const TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 12),
 
           // Meta row
           Row(
             children: [
-              Icon(Icons.visibility_outlined,
-                  size: 14,
-                  color: isDark
-                      ? AppColors.textSecondaryDark
-                      : AppColors.textSecondaryLight),
+              Icon(
+                Icons.visibility_outlined,
+                size: 14,
+                color: scheme.onSurfaceVariant,
+              ),
               const SizedBox(width: 4),
               Text(
                 '${article.views} ${l10n.t('views')}',
-                style: TextStyle(
-                  fontSize: 13,
-                  color: isDark
-                      ? AppColors.textSecondaryDark
-                      : AppColors.textSecondaryLight,
-                ),
+                style: TextStyle(fontSize: 13, color: scheme.onSurfaceVariant),
               ),
               if (article.publishedAt != null) ...[
                 const SizedBox(width: 16),
-                Icon(Icons.calendar_today_outlined,
-                    size: 14,
-                    color: isDark
-                        ? AppColors.textSecondaryDark
-                        : AppColors.textSecondaryLight),
+                Icon(
+                  Icons.calendar_today_outlined,
+                  size: 14,
+                  color: scheme.onSurfaceVariant,
+                ),
                 const SizedBox(width: 4),
                 Text(
-                  '${l10n.t('published')} ${dateFormat.format(article.publishedAt!.toLocal())}',
+                  '${l10n.t('published')} ${AppLocalizations.formatDate(context, article.publishedAt!)}',
                   style: TextStyle(
                     fontSize: 13,
-                    color: isDark
-                        ? AppColors.textSecondaryDark
-                        : AppColors.textSecondaryLight,
+                    color: scheme.onSurfaceVariant,
                   ),
                 ),
               ],
@@ -151,13 +137,9 @@ class _KbArticleScreenState extends ConsumerState<KbArticleScreen> {
                   padding: HtmlPaddings.zero,
                   fontSize: FontSize(15),
                   lineHeight: const LineHeight(1.6),
-                  color: isDark
-                      ? AppColors.textPrimaryDark
-                      : AppColors.textPrimaryLight,
+                  color: scheme.onSurface,
                 ),
-                'p': Style(
-                  margin: Margins.only(bottom: 12),
-                ),
+                'p': Style(margin: Margins.only(bottom: 12)),
                 'h1': Style(
                   fontSize: FontSize(22),
                   fontWeight: FontWeight.w700,
@@ -174,13 +156,11 @@ class _KbArticleScreenState extends ConsumerState<KbArticleScreen> {
                   margin: Margins.only(top: 12, bottom: 6),
                 ),
                 'a': Style(
-                  color: AppColors.primary,
+                  color: scheme.primary,
                   textDecoration: TextDecoration.none,
                 ),
                 'code': Style(
-                  backgroundColor: isDark
-                      ? Colors.white.withOpacity(0.08)
-                      : Colors.grey.withOpacity(0.1),
+                  backgroundColor: scheme.surfaceContainerHighest,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 4,
                     vertical: 2,
@@ -189,27 +169,21 @@ class _KbArticleScreenState extends ConsumerState<KbArticleScreen> {
                   fontSize: FontSize(13),
                 ),
                 'pre': Style(
-                  backgroundColor: isDark
-                      ? Colors.white.withOpacity(0.06)
-                      : Colors.grey.withOpacity(0.08),
+                  backgroundColor: scheme.surfaceContainerHigh,
                   padding: const EdgeInsets.all(12).htmlPadding,
                 ),
                 'blockquote': Style(
                   border: Border(
                     left: BorderSide(
-                      color: AppColors.primary.withOpacity(0.4),
+                      color: scheme.primary.withValues(alpha: 0.4),
                       width: 3,
                     ),
                   ),
                   padding: const EdgeInsets.only(left: 12).htmlPadding,
                   margin: Margins.only(top: 8, bottom: 8),
                 ),
-                'ul': Style(
-                  margin: Margins.only(bottom: 12),
-                ),
-                'ol': Style(
-                  margin: Margins.only(bottom: 12),
-                ),
+                'ul': Style(margin: Margins.only(bottom: 12)),
+                'ol': Style(margin: Margins.only(bottom: 12)),
               },
             ),
 
@@ -222,14 +196,9 @@ class _KbArticleScreenState extends ConsumerState<KbArticleScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: isDark
-                    ? Colors.white.withOpacity(0.03)
-                    : Colors.grey.withOpacity(0.04),
+                color: scheme.surfaceContainerLow,
                 borderRadius: AppRadius.cardBorder,
-                border: Border.all(
-                  color:
-                      isDark ? AppColors.borderDark : AppColors.borderLight,
-                ),
+                border: Border.all(color: scheme.outlineVariant),
               ),
               child: Column(
                 children: [
@@ -238,9 +207,7 @@ class _KbArticleScreenState extends ConsumerState<KbArticleScreen> {
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
-                      color: isDark
-                          ? AppColors.textPrimaryDark
-                          : AppColors.textPrimaryLight,
+                      color: scheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -251,8 +218,7 @@ class _KbArticleScreenState extends ConsumerState<KbArticleScreen> {
                         onPressed: () async {
                           final success = await ref
                               .read(articleDetailProvider.notifier)
-                              .rateArticle(
-                                  slug: widget.slug, helpful: true);
+                              .rateArticle(slug: widget.slug, helpful: true);
                           if (success && mounted) {
                             setState(() => _ratedHelpful = true);
                           }
@@ -265,14 +231,12 @@ class _KbArticleScreenState extends ConsumerState<KbArticleScreen> {
                         onPressed: () async {
                           final success = await ref
                               .read(articleDetailProvider.notifier)
-                              .rateArticle(
-                                  slug: widget.slug, helpful: false);
+                              .rateArticle(slug: widget.slug, helpful: false);
                           if (success && mounted) {
                             setState(() => _ratedHelpful = false);
                           }
                         },
-                        icon:
-                            const Icon(Icons.thumb_down_outlined, size: 18),
+                        icon: const Icon(Icons.thumb_down_outlined, size: 18),
                         label: Text(l10n.t('not_helpful')),
                       ),
                     ],
@@ -284,16 +248,19 @@ class _KbArticleScreenState extends ConsumerState<KbArticleScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppColors.statusResolved.withOpacity(0.08),
+                color: AppColors.statusResolved.withValues(alpha: 0.08),
                 borderRadius: AppRadius.cardBorder,
                 border: Border.all(
-                    color: AppColors.statusResolved.withOpacity(0.2)),
+                  color: AppColors.statusResolved.withValues(alpha: 0.2),
+                ),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.check_circle,
-                      color: AppColors.statusResolved),
+                  const Icon(
+                    Icons.check_circle,
+                    color: AppColors.statusResolved,
+                  ),
                   const SizedBox(width: 8),
                   Text(
                     l10n.t('thank_you_feedback'),
@@ -311,26 +278,25 @@ class _KbArticleScreenState extends ConsumerState<KbArticleScreen> {
             const SizedBox(height: 24),
             Text(
               l10n.t('related_articles'),
-              style: const TextStyle(
-                fontSize: 17,
-                fontWeight: FontWeight.w600,
-              ),
+              style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 12),
-            ...article.relatedArticles.map((related) => Card(
-                  margin: const EdgeInsets.only(bottom: 8),
-                  child: ListTile(
-                    title: Text(
-                      related.title,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
+            ...article.relatedArticles.map(
+              (related) => Card(
+                margin: const EdgeInsets.only(bottom: 8),
+                child: ListTile(
+                  title: Text(
+                    related.title,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
                     ),
-                    trailing: const Icon(Icons.chevron_right, size: 20),
-                    onTap: () => context.go('/kb/${related.slug}'),
                   ),
-                )),
+                  trailing: const Icon(Icons.chevron_right, size: 20),
+                  onTap: () => context.go('/kb/${related.slug}'),
+                ),
+              ),
+            ),
           ],
           const SizedBox(height: 32),
         ],

@@ -52,9 +52,7 @@ class _KbListScreenState extends ConsumerState<KbListScreen> {
   void _onSearchChanged(String query) {
     _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () {
-      ref
-          .read(kbListProvider.notifier)
-          .setSearch(query.isEmpty ? null : query);
+      ref.read(kbListProvider.notifier).setSearch(query.isEmpty ? null : query);
     });
   }
 
@@ -62,12 +60,10 @@ class _KbListScreenState extends ConsumerState<KbListScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final state = ref.watch(kbListProvider);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.knowledgeBase),
-      ),
+      appBar: AppBar(title: Text(l10n.knowledgeBase)),
       body: Column(
         children: [
           // Search bar
@@ -108,11 +104,9 @@ class _KbListScreenState extends ConsumerState<KbListScreen> {
                       onSelected: (_) {
                         ref.read(kbListProvider.notifier).setCategory(null);
                       },
-                      selectedColor: AppColors.primary.withOpacity(0.15),
+                      selectedColor: scheme.primary.withValues(alpha: 0.15),
                       labelStyle: TextStyle(
-                        color: state.categoryId == null
-                            ? AppColors.primary
-                            : null,
+                        color: state.categoryId == null ? scheme.primary : null,
                         fontWeight: state.categoryId == null
                             ? FontWeight.w600
                             : FontWeight.w400,
@@ -133,11 +127,12 @@ class _KbListScreenState extends ConsumerState<KbListScreen> {
                               .read(kbListProvider.notifier)
                               .setCategory(isSelected ? null : catId);
                         },
-                        selectedColor: AppColors.primary.withOpacity(0.15),
+                        selectedColor: scheme.primary.withValues(alpha: 0.15),
                         labelStyle: TextStyle(
-                          color: isSelected ? AppColors.primary : null,
-                          fontWeight:
-                              isSelected ? FontWeight.w600 : FontWeight.w400,
+                          color: isSelected ? scheme.primary : null,
+                          fontWeight: isSelected
+                              ? FontWeight.w600
+                              : FontWeight.w400,
                         ),
                       ),
                     );
@@ -147,15 +142,13 @@ class _KbListScreenState extends ConsumerState<KbListScreen> {
             ),
 
           // Article list
-          Expanded(
-            child: _buildBody(state, l10n, isDark),
-          ),
+          Expanded(child: _buildBody(state, l10n)),
         ],
       ),
     );
   }
 
-  Widget _buildBody(KbListState state, AppLocalizations l10n, bool isDark) {
+  Widget _buildBody(KbListState state, AppLocalizations l10n) {
     if (state.isLoading && state.articles.isEmpty) {
       return const LoadingShimmer();
     }
@@ -204,7 +197,7 @@ class _ArticleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final scheme = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context);
 
     return Card(
@@ -221,10 +214,12 @@ class _ArticleCard extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 6),
                   child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withOpacity(0.08),
+                      color: scheme.primary.withValues(alpha: 0.08),
                       borderRadius: AppRadius.badgeBorder,
                     ),
                     child: Text(
@@ -232,7 +227,7 @@ class _ArticleCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.primary,
+                        color: scheme.primary,
                       ),
                     ),
                   ),
@@ -252,9 +247,7 @@ class _ArticleCard extends StatelessWidget {
                   article.excerpt!,
                   style: TextStyle(
                     fontSize: 13,
-                    color: isDark
-                        ? AppColors.textSecondaryDark
-                        : AppColors.textSecondaryLight,
+                    color: scheme.onSurfaceVariant,
                     height: 1.4,
                   ),
                   maxLines: 2,
@@ -267,18 +260,14 @@ class _ArticleCard extends StatelessWidget {
                   Icon(
                     Icons.visibility_outlined,
                     size: 14,
-                    color: isDark
-                        ? AppColors.textSecondaryDark
-                        : AppColors.textSecondaryLight,
+                    color: scheme.onSurfaceVariant,
                   ),
                   const SizedBox(width: 4),
                   Text(
                     '${article.views} ${l10n.t('views')}',
                     style: TextStyle(
                       fontSize: 12,
-                      color: isDark
-                          ? AppColors.textSecondaryDark
-                          : AppColors.textSecondaryLight,
+                      color: scheme.onSurfaceVariant,
                     ),
                   ),
                 ],

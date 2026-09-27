@@ -13,12 +13,10 @@ class SettingsScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final authState = ref.watch(authProvider);
     final themeState = ref.watch(themeProvider);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.settings),
-      ),
+      appBar: AppBar(title: Text(l10n.settings)),
       body: ListView(
         padding: const EdgeInsets.symmetric(vertical: 8),
         children: [
@@ -29,20 +27,15 @@ class SettingsScreen extends ConsumerWidget {
               child: Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: isDark
-                      ? Colors.white.withOpacity(0.03)
-                      : Colors.grey.withOpacity(0.04),
+                  color: scheme.surfaceContainerLow,
                   borderRadius: AppRadius.cardBorder,
-                  border: Border.all(
-                    color:
-                        isDark ? AppColors.borderDark : AppColors.borderLight,
-                  ),
+                  border: Border.all(color: scheme.outlineVariant),
                 ),
                 child: Row(
                   children: [
                     CircleAvatar(
                       radius: 28,
-                      backgroundColor: AppColors.primary.withOpacity(0.1),
+                      backgroundColor: scheme.primary.withValues(alpha: 0.1),
                       backgroundImage: authState.user!.avatarUrl != null
                           ? NetworkImage(authState.user!.avatarUrl!)
                           : null,
@@ -51,8 +44,8 @@ class SettingsScreen extends ConsumerWidget {
                               authState.user!.name.isNotEmpty
                                   ? authState.user!.name[0].toUpperCase()
                                   : '?',
-                              style: const TextStyle(
-                                color: AppColors.primary,
+                              style: TextStyle(
+                                color: scheme.primary,
                                 fontWeight: FontWeight.w700,
                                 fontSize: 22,
                               ),
@@ -76,9 +69,7 @@ class SettingsScreen extends ConsumerWidget {
                             authState.user!.email,
                             style: TextStyle(
                               fontSize: 14,
-                              color: isDark
-                                  ? AppColors.textSecondaryDark
-                                  : AppColors.textSecondaryLight,
+                              color: scheme.onSurfaceVariant,
                             ),
                           ),
                         ],
@@ -98,27 +89,25 @@ class SettingsScreen extends ConsumerWidget {
             subtitle: _themeModeLabel(l10n, themeState.themeMode),
             trailing: SegmentedButton<ThemeMode>(
               segments: [
-                ButtonSegment(
+                const ButtonSegment(
                   value: ThemeMode.light,
-                  icon: const Icon(Icons.light_mode, size: 18),
+                  icon: Icon(Icons.light_mode, size: 18),
                 ),
-                ButtonSegment(
+                const ButtonSegment(
                   value: ThemeMode.system,
-                  icon: const Icon(Icons.settings_brightness, size: 18),
+                  icon: Icon(Icons.settings_brightness, size: 18),
                 ),
-                ButtonSegment(
+                const ButtonSegment(
                   value: ThemeMode.dark,
-                  icon: const Icon(Icons.dark_mode, size: 18),
+                  icon: Icon(Icons.dark_mode, size: 18),
                 ),
               ],
               selected: {themeState.themeMode},
               onSelectionChanged: (Set<ThemeMode> selection) {
-                ref
-                    .read(themeProvider.notifier)
-                    .setThemeMode(selection.first);
+                ref.read(themeProvider.notifier).setThemeMode(selection.first);
               },
               showSelectedIcon: false,
-              style: ButtonStyle(
+              style: const ButtonStyle(
                 visualDensity: VisualDensity.compact,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
@@ -195,7 +184,8 @@ class SettingsScreen extends ConsumerWidget {
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.statusEscalated,
                   side: BorderSide(
-                      color: AppColors.statusEscalated.withOpacity(0.4)),
+                    color: AppColors.statusEscalated.withValues(alpha: 0.4),
+                  ),
                   padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
               ),
@@ -207,12 +197,7 @@ class SettingsScreen extends ConsumerWidget {
           Center(
             child: Text(
               'Escalated v1.0.0',
-              style: TextStyle(
-                fontSize: 12,
-                color: isDark
-                    ? AppColors.textSecondaryDark
-                    : AppColors.textSecondaryLight,
-              ),
+              style: TextStyle(fontSize: 12, color: scheme.onSurfaceVariant),
             ),
           ),
           const SizedBox(height: 8),
@@ -242,7 +227,7 @@ class _SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final scheme = Theme.of(context).colorScheme;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
@@ -252,9 +237,7 @@ class _SectionHeader extends StatelessWidget {
           fontSize: 12,
           fontWeight: FontWeight.w600,
           letterSpacing: 0.8,
-          color: isDark
-              ? AppColors.textSecondaryDark
-              : AppColors.textSecondaryLight,
+          color: scheme.onSurfaceVariant,
         ),
       ),
     );
@@ -276,30 +259,20 @@ class _SettingsTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final scheme = Theme.of(context).colorScheme;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isDark
-              ? Colors.white.withOpacity(0.03)
-              : Colors.grey.withOpacity(0.04),
+          color: scheme.surfaceContainerLow,
           borderRadius: AppRadius.cardBorder,
-          border: Border.all(
-            color: isDark ? AppColors.borderDark : AppColors.borderLight,
-          ),
+          border: Border.all(color: scheme.outlineVariant),
         ),
         child: Row(
           children: [
-            Icon(
-              icon,
-              size: 22,
-              color: isDark
-                  ? AppColors.textSecondaryDark
-                  : AppColors.textSecondaryLight,
-            ),
+            Icon(icon, size: 22, color: scheme.onSurfaceVariant),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -317,15 +290,13 @@ class _SettingsTile extends StatelessWidget {
                       subtitle!,
                       style: TextStyle(
                         fontSize: 13,
-                        color: isDark
-                            ? AppColors.textSecondaryDark
-                            : AppColors.textSecondaryLight,
+                        color: scheme.onSurfaceVariant,
                       ),
                     ),
                 ],
               ),
             ),
-            if (trailing != null) trailing!,
+            ?trailing,
           ],
         ),
       ),
@@ -349,7 +320,7 @@ class _LanguageTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isSelected = locale.languageCode == currentLocale.languageCode;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final scheme = Theme.of(context).colorScheme;
 
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 20),
@@ -358,16 +329,12 @@ class _LanguageTile extends StatelessWidget {
         style: TextStyle(
           fontSize: 15,
           fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-          color: isSelected ? AppColors.primary : null,
+          color: isSelected ? scheme.primary : null,
         ),
       ),
       trailing: isSelected
-          ? const Icon(Icons.check_circle, color: AppColors.primary, size: 22)
-          : Icon(
-              Icons.circle_outlined,
-              size: 22,
-              color: isDark ? AppColors.borderDark : AppColors.borderLight,
-            ),
+          ? Icon(Icons.check_circle, color: scheme.primary, size: 22)
+          : Icon(Icons.circle_outlined, size: 22, color: scheme.outlineVariant),
       onTap: onTap,
     );
   }
@@ -378,7 +345,7 @@ class _PoweredByEscalated extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final scheme = Theme.of(context).colorScheme;
 
     return Opacity(
       opacity: 0.5,
@@ -386,22 +353,11 @@ class _PoweredByEscalated extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            Icons.open_in_new,
-            size: 12,
-            color: isDark
-                ? AppColors.textSecondaryDark
-                : AppColors.textSecondaryLight,
-          ),
+          Icon(Icons.open_in_new, size: 12, color: scheme.onSurfaceVariant),
           const SizedBox(width: 4),
           Text(
             'Powered by Escalated',
-            style: TextStyle(
-              fontSize: 11,
-              color: isDark
-                  ? AppColors.textSecondaryDark
-                  : AppColors.textSecondaryLight,
-            ),
+            style: TextStyle(fontSize: 11, color: scheme.onSurfaceVariant),
           ),
         ],
       ),

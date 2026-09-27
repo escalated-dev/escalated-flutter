@@ -6,11 +6,7 @@ class PriorityBadge extends StatelessWidget {
   final String priority;
   final String? label;
 
-  const PriorityBadge({
-    super.key,
-    required this.priority,
-    this.label,
-  });
+  const PriorityBadge({super.key, required this.priority, this.label});
 
   @override
   Widget build(BuildContext context) {
@@ -21,18 +17,14 @@ class PriorityBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.12),
+        color: color.withValues(alpha: 0.12),
         borderRadius: AppRadius.badgeBorder,
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            _priorityIcon(priority),
-            size: 12,
-            color: color,
-          ),
+          Icon(_priorityIcon(priority), size: 12, color: color),
           const SizedBox(width: 4),
           Text(
             displayLabel,
