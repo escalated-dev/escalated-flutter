@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import '../l10n/app_localizations.dart';
-import '../theme/colors.dart';
 import 'file_dropzone.dart';
 
 class ReplyComposer extends StatefulWidget {
-  final Future<void> Function(String body, List<String> attachmentPaths)
-      onSend;
+  final Future<void> Function(String body, List<String> attachmentPaths) onSend;
   final bool isSending;
 
   const ReplyComposer({
@@ -46,17 +44,13 @@ class _ReplyComposerState extends State<ReplyComposer> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final scheme = Theme.of(context).colorScheme;
 
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
-        border: Border(
-          top: BorderSide(
-            color: isDark ? AppColors.borderDark : AppColors.borderLight,
-          ),
-        ),
+        color: scheme.surface,
+        border: Border(top: BorderSide(color: scheme.outlineVariant)),
       ),
       child: SafeArea(
         top: false,
@@ -88,15 +82,14 @@ class _ReplyComposerState extends State<ReplyComposer> {
                   icon: Icon(
                     Icons.attach_file,
                     color: _showAttachments
-                        ? AppColors.primary
-                        : (isDark
-                            ? AppColors.textSecondaryDark
-                            : AppColors.textSecondaryLight),
+                        ? scheme.primary
+                        : scheme.onSurfaceVariant,
                   ),
                   onPressed: widget.isSending
                       ? null
-                      : () =>
-                          setState(() => _showAttachments = !_showAttachments),
+                      : () => setState(
+                          () => _showAttachments = !_showAttachments,
+                        ),
                   tooltip: l10n.t('attachments'),
                 ),
                 const Spacer(),
@@ -106,10 +99,7 @@ class _ReplyComposerState extends State<ReplyComposer> {
                       ? const SizedBox(
                           width: 16,
                           height: 16,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.white,
-                          ),
+                          child: CircularProgressIndicator(strokeWidth: 2),
                         )
                       : const Icon(Icons.send, size: 18),
                   label: Text(l10n.t('send_reply')),

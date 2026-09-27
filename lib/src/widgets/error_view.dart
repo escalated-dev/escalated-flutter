@@ -1,21 +1,16 @@
 import 'package:flutter/material.dart';
 import '../l10n/app_localizations.dart';
-import '../theme/colors.dart';
 
 class ErrorView extends StatelessWidget {
   final String? message;
   final VoidCallback? onRetry;
 
-  const ErrorView({
-    super.key,
-    this.message,
-    this.onRetry,
-  });
+  const ErrorView({super.key, this.message, this.onRetry});
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final scheme = Theme.of(context).colorScheme;
 
     return Center(
       child: Padding(
@@ -26,17 +21,15 @@ class ErrorView extends StatelessWidget {
             Icon(
               Icons.error_outline,
               size: 56,
-              color: AppColors.statusEscalated.withOpacity(0.7),
+              color: scheme.error.withValues(alpha: 0.7),
             ),
             const SizedBox(height: 16),
             Text(
-              message ?? l10n.t('error'),
+              l10n.t(message ?? 'error'),
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
-                color: isDark
-                    ? AppColors.textPrimaryDark
-                    : AppColors.textPrimaryLight,
+                color: scheme.onSurface,
               ),
               textAlign: TextAlign.center,
             ),

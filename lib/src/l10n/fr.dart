@@ -126,5 +126,26 @@ const Map<String, String> fr = {
   'system': 'Syst\u00e8me',
   'language': 'Langue',
   'confirm_logout': 'Se D\u00e9connecter',
-  'confirm_logout_message': '\u00cates-vous s\u00fbr de vouloir vous d\u00e9connecter ?',
+  'confirm_logout_message':
+      '\u00cates-vous s\u00fbr de vouloir vous d\u00e9connecter ?',
+
+  // Messages
+  'replies': 'R\u00e9ponses',
+  'none': 'Aucun',
+  'sla': 'SLA',
+  'field_required': '{field} est obligatoire',
+  'unexpected_error': "Une erreur inattendue s'est produite.",
+  'failed_to_load_tickets': 'Impossible de charger les tickets.',
+  'failed_to_load_ticket': 'Impossible de charger le ticket.',
+  'failed_to_create_ticket':
+      'Impossible de cr\u00e9er le ticket. Veuillez r\u00e9essayer.',
+  'failed_to_send_reply': "Impossible d'envoyer votre r\u00e9ponse.",
+  'failed_to_close_ticket': 'Impossible de fermer le ticket.',
+  'failed_to_reopen_ticket': 'Impossible de rouvrir le ticket.',
+  'failed_to_load_articles': 'Impossible de charger les articles.',
+  'failed_to_load_article': "Impossible de charger l'article.",
+  'failed_to_sign_in':
+      '\u00c9chec de la connexion. V\u00e9rifiez votre adresse e-mail et votre mot de passe.',
+  'failed_to_register': "\u00c9chec de l'inscription.",
+  'failed_to_update_profile': 'Impossible de mettre \u00e0 jour votre profil.',
 };

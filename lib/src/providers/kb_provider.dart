@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import '../models/article.dart';
 import 'auth_provider.dart';
+import 'error_message.dart';
 
 class KbListState {
   final List<Article> articles;
@@ -92,14 +93,10 @@ class KbListNotifier extends StateNotifier<KbListState> {
     } on DioException catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: e.response?.data?['message'] as String? ??
-            'Failed to load articles.',
+        error: serverMessageOr(e, 'failed_to_load_articles'),
       );
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: 'An unexpected error occurred.',
-      );
+      state = state.copyWith(isLoading: false, error: 'unexpected_error');
     }
   }
 
@@ -152,8 +149,9 @@ class KbListNotifier extends StateNotifier<KbListState> {
   }
 }
 
-final kbListProvider =
-    StateNotifierProvider<KbListNotifier, KbListState>((ref) {
+final kbListProvider = StateNotifierProvider<KbListNotifier, KbListState>((
+  ref,
+) {
   return KbListNotifier(ref);
 });
 
@@ -163,11 +161,7 @@ class ArticleDetailState {
   final bool isLoading;
   final String? error;
 
-  const ArticleDetailState({
-    this.article,
-    this.isLoading = false,
-    this.error,
-  });
+  const ArticleDetailState({this.article, this.isLoading = false, this.error});
 
   ArticleDetailState copyWith({
     Article? article,
@@ -196,14 +190,10 @@ class ArticleDetailNotifier extends StateNotifier<ArticleDetailState> {
     } on DioException catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: e.response?.data?['message'] as String? ??
-            'Failed to load article.',
+        error: serverMessageOr(e, 'failed_to_load_article'),
       );
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: 'An unexpected error occurred.',
-      );
+      state = state.copyWith(isLoading: false, error: 'unexpected_error');
     }
   }
 
@@ -223,5 +213,5 @@ class ArticleDetailNotifier extends StateNotifier<ArticleDetailState> {
 
 final articleDetailProvider =
     StateNotifierProvider<ArticleDetailNotifier, ArticleDetailState>((ref) {
-  return ArticleDetailNotifier(ref);
-});
+      return ArticleDetailNotifier(ref);
+    });

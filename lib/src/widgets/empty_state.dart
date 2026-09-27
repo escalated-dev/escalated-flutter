@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../theme/colors.dart';
 
 class EmptyState extends StatelessWidget {
   final IconData icon;
@@ -17,7 +16,7 @@ class EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final scheme = Theme.of(context).colorScheme;
 
     return Center(
       child: Padding(
@@ -28,9 +27,7 @@ class EmptyState extends StatelessWidget {
             Icon(
               icon,
               size: 64,
-              color: isDark
-                  ? AppColors.textSecondaryDark.withOpacity(0.5)
-                  : AppColors.textSecondaryLight.withOpacity(0.5),
+              color: scheme.onSurfaceVariant.withValues(alpha: 0.5),
             ),
             const SizedBox(height: 16),
             Text(
@@ -38,9 +35,7 @@ class EmptyState extends StatelessWidget {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
-                color: isDark
-                    ? AppColors.textPrimaryDark
-                    : AppColors.textPrimaryLight,
+                color: scheme.onSurface,
               ),
               textAlign: TextAlign.center,
             ),
@@ -48,19 +43,11 @@ class EmptyState extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 subtitle!,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: isDark
-                      ? AppColors.textSecondaryDark
-                      : AppColors.textSecondaryLight,
-                ),
+                style: TextStyle(fontSize: 14, color: scheme.onSurfaceVariant),
                 textAlign: TextAlign.center,
               ),
             ],
-            if (action != null) ...[
-              const SizedBox(height: 24),
-              action!,
-            ],
+            if (action != null) ...[const SizedBox(height: 24), action!],
           ],
         ),
       ),

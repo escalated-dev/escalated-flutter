@@ -55,12 +55,12 @@ class _TicketFiltersSheetState extends State<TicketFiltersSheet> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final scheme = Theme.of(context).colorScheme;
 
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
+        color: scheme.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: SafeArea(
@@ -74,7 +74,7 @@ class _TicketFiltersSheetState extends State<TicketFiltersSheet> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.grey.shade700 : Colors.grey.shade300,
+                  color: scheme.outlineVariant,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -82,10 +82,7 @@ class _TicketFiltersSheetState extends State<TicketFiltersSheet> {
             const SizedBox(height: 20),
             Text(
               l10n.t('filter'),
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
             TextField(
@@ -111,12 +108,14 @@ class _TicketFiltersSheetState extends State<TicketFiltersSheet> {
                   isSelected: _selectedStatus == null,
                   onTap: () => setState(() => _selectedStatus = null),
                 ),
-                ..._statuses.map((status) => _FilterChip(
-                      label: l10n.t(status),
-                      isSelected: _selectedStatus == status,
-                      color: AppColors.statusColor(status),
-                      onTap: () => setState(() => _selectedStatus = status),
-                    )),
+                ..._statuses.map(
+                  (status) => _FilterChip(
+                    label: l10n.t(status),
+                    isSelected: _selectedStatus == status,
+                    color: AppColors.statusColor(status),
+                    onTap: () => setState(() => _selectedStatus = status),
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 16),
@@ -134,12 +133,14 @@ class _TicketFiltersSheetState extends State<TicketFiltersSheet> {
                   isSelected: _selectedPriority == null,
                   onTap: () => setState(() => _selectedPriority = null),
                 ),
-                ..._priorities.map((priority) => _FilterChip(
-                      label: l10n.t(priority),
-                      isSelected: _selectedPriority == priority,
-                      color: AppColors.priorityColor(priority),
-                      onTap: () => setState(() => _selectedPriority = priority),
-                    )),
+                ..._priorities.map(
+                  (priority) => _FilterChip(
+                    label: l10n.t(priority),
+                    isSelected: _selectedPriority == priority,
+                    color: AppColors.priorityColor(priority),
+                    onTap: () => setState(() => _selectedPriority = priority),
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 24),
@@ -197,17 +198,20 @@ class _FilterChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final chipColor = color ?? AppColors.primary;
+    final scheme = Theme.of(context).colorScheme;
+    final chipColor = color ?? scheme.primary;
 
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
-          color: isSelected ? chipColor.withOpacity(0.15) : Colors.transparent,
+          color: isSelected
+              ? chipColor.withValues(alpha: 0.15)
+              : Colors.transparent,
           borderRadius: AppRadius.badgeBorder,
           border: Border.all(
-            color: isSelected ? chipColor : Colors.grey.withOpacity(0.3),
+            color: isSelected ? chipColor : scheme.outlineVariant,
           ),
         ),
         child: Text(
@@ -215,7 +219,7 @@ class _FilterChip extends StatelessWidget {
           style: TextStyle(
             fontSize: 13,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-            color: isSelected ? chipColor : null,
+            color: isSelected ? chipColor : scheme.onSurface,
           ),
         ),
       ),

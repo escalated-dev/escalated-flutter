@@ -28,7 +28,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
-    await ref.read(authProvider.notifier).login(
+    await ref
+        .read(authProvider.notifier)
+        .login(
           email: _emailController.text.trim(),
           password: _passwordController.text,
         );
@@ -45,7 +47,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final authState = ref.watch(authProvider);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       body: SafeArea(
@@ -58,11 +60,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Icon(
-                    Icons.support_agent,
-                    size: 56,
-                    color: AppColors.primary,
-                  ),
+                  Icon(Icons.support_agent, size: 56, color: scheme.primary),
                   const SizedBox(height: 16),
                   Text(
                     l10n.t('login_title'),
@@ -77,9 +75,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     'Escalated',
                     style: TextStyle(
                       fontSize: 16,
-                      color: isDark
-                          ? AppColors.textSecondaryDark
-                          : AppColors.textSecondaryLight,
+                      color: scheme.onSurfaceVariant,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -88,10 +84,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: AppColors.statusEscalated.withOpacity(0.1),
+                        color: AppColors.statusEscalated.withValues(alpha: 0.1),
                         borderRadius: AppRadius.baseBorder,
                         border: Border.all(
-                          color: AppColors.statusEscalated.withOpacity(0.3),
+                          color: AppColors.statusEscalated.withValues(
+                            alpha: 0.3,
+                          ),
                         ),
                       ),
                       child: Row(
@@ -104,7 +102,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
-                              authState.error!,
+                              AppLocalizations.of(context).t(authState.error!),
                               style: const TextStyle(
                                 color: AppColors.statusEscalated,
                                 fontSize: 14,
@@ -147,8 +145,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               ? Icons.visibility_off
                               : Icons.visibility,
                         ),
-                        onPressed: () =>
-                            setState(() => _obscurePassword = !_obscurePassword),
+                        onPressed: () => setState(
+                          () => _obscurePassword = !_obscurePassword,
+                        ),
                       ),
                     ),
                     obscureText: _obscurePassword,
@@ -178,10 +177,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           ? const SizedBox(
                               width: 20,
                               height: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: Colors.white,
-                              ),
+                              child: CircularProgressIndicator(strokeWidth: 2),
                             )
                           : Text(l10n.t('login')),
                     ),
@@ -192,11 +188,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     children: [
                       Text(
                         l10n.t('already_have_account').replaceAll('?', ''),
-                        style: TextStyle(
-                          color: isDark
-                              ? AppColors.textSecondaryDark
-                              : AppColors.textSecondaryLight,
-                        ),
+                        style: TextStyle(color: scheme.onSurfaceVariant),
                       ),
                     ],
                   ),

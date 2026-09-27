@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/legacy.dart';
 import '../models/ticket.dart';
 import '../models/ticket_summary.dart';
 import 'auth_provider.dart';
+import 'error_message.dart';
 
 // Ticket list state
 class TicketListState {
@@ -94,14 +95,10 @@ class TicketListNotifier extends StateNotifier<TicketListState> {
     } on DioException catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: e.response?.data?['message'] as String? ??
-            'Failed to load tickets.',
+        error: serverMessageOr(e, 'failed_to_load_tickets'),
       );
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: 'An unexpected error occurred.',
-      );
+      state = state.copyWith(isLoading: false, error: 'unexpected_error');
     }
   }
 
@@ -130,11 +127,7 @@ class TicketListNotifier extends StateNotifier<TicketListState> {
     }
   }
 
-  void setFilters({
-    String? search,
-    String? status,
-    String? priority,
-  }) {
+  void setFilters({String? search, String? status, String? priority}) {
     state = state.copyWith(
       searchQuery: search,
       statusFilter: status,
@@ -151,8 +144,8 @@ class TicketListNotifier extends StateNotifier<TicketListState> {
 
 final ticketListProvider =
     StateNotifierProvider<TicketListNotifier, TicketListState>((ref) {
-  return TicketListNotifier(ref);
-});
+      return TicketListNotifier(ref);
+    });
 
 // Ticket detail state
 class TicketDetailState {
@@ -201,14 +194,10 @@ class TicketDetailNotifier extends StateNotifier<TicketDetailState> {
     } on DioException catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: e.response?.data?['message'] as String? ??
-            'Failed to load ticket.',
+        error: serverMessageOr(e, 'failed_to_load_ticket'),
       );
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: 'An unexpected error occurred.',
-      );
+      state = state.copyWith(isLoading: false, error: 'unexpected_error');
     }
   }
 
@@ -231,15 +220,11 @@ class TicketDetailNotifier extends StateNotifier<TicketDetailState> {
     } on DioException catch (e) {
       state = state.copyWith(
         isSendingReply: false,
-        error: e.response?.data?['message'] as String? ??
-            'Failed to send reply.',
+        error: serverMessageOr(e, 'failed_to_send_reply'),
       );
       return false;
     } catch (e) {
-      state = state.copyWith(
-        isSendingReply: false,
-        error: 'An unexpected error occurred.',
-      );
+      state = state.copyWith(isSendingReply: false, error: 'unexpected_error');
       return false;
     }
   }
@@ -254,7 +239,7 @@ class TicketDetailNotifier extends StateNotifier<TicketDetailState> {
     } catch (e) {
       state = state.copyWith(
         isUpdating: false,
-        error: 'Failed to close ticket.',
+        error: 'failed_to_close_ticket',
       );
       return false;
     }
@@ -270,7 +255,7 @@ class TicketDetailNotifier extends StateNotifier<TicketDetailState> {
     } catch (e) {
       state = state.copyWith(
         isUpdating: false,
-        error: 'Failed to reopen ticket.',
+        error: 'failed_to_reopen_ticket',
       );
       return false;
     }
@@ -297,8 +282,8 @@ class TicketDetailNotifier extends StateNotifier<TicketDetailState> {
 
 final ticketDetailProvider =
     StateNotifierProvider<TicketDetailNotifier, TicketDetailState>((ref) {
-  return TicketDetailNotifier(ref);
-});
+      return TicketDetailNotifier(ref);
+    });
 
 // Guest ticket detail
 class GuestTicketNotifier extends StateNotifier<TicketDetailState> {
@@ -315,14 +300,10 @@ class GuestTicketNotifier extends StateNotifier<TicketDetailState> {
     } on DioException catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: e.response?.data?['message'] as String? ??
-            'Failed to load ticket.',
+        error: serverMessageOr(e, 'failed_to_load_ticket'),
       );
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: 'An unexpected error occurred.',
-      );
+      state = state.copyWith(isLoading: false, error: 'unexpected_error');
     }
   }
 
@@ -347,7 +328,7 @@ class GuestTicketNotifier extends StateNotifier<TicketDetailState> {
     } catch (e) {
       state = state.copyWith(
         isSendingReply: false,
-        error: 'Failed to send reply.',
+        error: 'failed_to_send_reply',
       );
       return false;
     }
@@ -356,5 +337,5 @@ class GuestTicketNotifier extends StateNotifier<TicketDetailState> {
 
 final guestTicketProvider =
     StateNotifierProvider<GuestTicketNotifier, TicketDetailState>((ref) {
-  return GuestTicketNotifier(ref);
-});
+      return GuestTicketNotifier(ref);
+    });

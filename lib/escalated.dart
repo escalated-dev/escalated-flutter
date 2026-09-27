@@ -15,7 +15,7 @@
 ///   child: MaterialApp.router(routerConfig: yourRouter),
 /// )
 /// ```
-library escalated;
+library;
 
 // Configuration
 export 'src/escalated_config.dart';

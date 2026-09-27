@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:intl/intl.dart';
+import '../l10n/app_localizations.dart';
 import '../models/reply.dart';
 import '../theme/colors.dart';
 import 'attachment_list.dart';
@@ -20,10 +20,14 @@ class ReplyThread extends StatelessWidget {
     if (replies.isEmpty) return const SizedBox.shrink();
 
     return Column(
-      children: replies.map((reply) => _ReplyCard(
-            reply: reply,
-            onAttachmentDownload: onAttachmentDownload,
-          )).toList(),
+      children: replies
+          .map(
+            (reply) => _ReplyCard(
+              reply: reply,
+              onAttachmentDownload: onAttachmentDownload,
+            ),
+          )
+          .toList(),
     );
   }
 }
@@ -32,25 +36,19 @@ class _ReplyCard extends StatelessWidget {
   final Reply reply;
   final void Function(Reply)? onAttachmentDownload;
 
-  const _ReplyCard({
-    required this.reply,
-    this.onAttachmentDownload,
-  });
+  const _ReplyCard({required this.reply, this.onAttachmentDownload});
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final dateFormat = DateFormat('MMM d, y · h:mm a');
+    final scheme = Theme.of(context).colorScheme;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
+        color: scheme.surface,
         borderRadius: AppRadius.cardBorder,
-        border: Border.all(
-          color: isDark ? AppColors.borderDark : AppColors.borderLight,
-        ),
+        border: Border.all(color: scheme.outlineVariant),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,13 +57,13 @@ class _ReplyCard extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 16,
-                backgroundColor: AppColors.primary.withOpacity(0.1),
+                backgroundColor: scheme.primary.withValues(alpha: 0.1),
                 child: Text(
                   reply.author.name.isNotEmpty
                       ? reply.author.name[0].toUpperCase()
                       : '?',
-                  style: const TextStyle(
-                    color: AppColors.primary,
+                  style: TextStyle(
+                    color: scheme.primary,
                     fontWeight: FontWeight.w600,
                     fontSize: 14,
                   ),
@@ -84,23 +82,17 @@ class _ReplyCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      dateFormat.format(reply.createdAt.toLocal()),
+                      AppLocalizations.formatDateTime(context, reply.createdAt),
                       style: TextStyle(
                         fontSize: 12,
-                        color: isDark
-                            ? AppColors.textSecondaryDark
-                            : AppColors.textSecondaryLight,
+                        color: scheme.onSurfaceVariant,
                       ),
                     ),
                   ],
                 ),
               ),
               if (reply.isPinned)
-                Icon(
-                  Icons.push_pin,
-                  size: 16,
-                  color: AppColors.primary,
-                ),
+                Icon(Icons.push_pin, size: 16, color: scheme.primary),
             ],
           ),
           const SizedBox(height: 12),
@@ -111,15 +103,11 @@ class _ReplyCard extends StatelessWidget {
                 margin: Margins.zero,
                 padding: HtmlPaddings.zero,
                 fontSize: FontSize(14),
-                color: isDark
-                    ? AppColors.textPrimaryDark
-                    : AppColors.textPrimaryLight,
+                color: scheme.onSurface,
               ),
-              'p': Style(
-                margin: Margins.only(bottom: 8),
-              ),
+              'p': Style(margin: Margins.only(bottom: 8)),
               'a': Style(
-                color: AppColors.primary,
+                color: scheme.primary,
                 textDecoration: TextDecoration.none,
               ),
             },

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/ticket_summary.dart';
 import '../../providers/ticket_provider.dart';
@@ -57,11 +56,9 @@ class _TicketListScreenState extends ConsumerState<TicketListScreen> {
         currentStatus: state.statusFilter,
         currentPriority: state.priorityFilter,
         onApply: (search, status, priority) {
-          ref.read(ticketListProvider.notifier).setFilters(
-                search: search,
-                status: status,
-                priority: priority,
-              );
+          ref
+              .read(ticketListProvider.notifier)
+              .setFilters(search: search, status: status, priority: priority);
         },
       ),
     );
@@ -71,6 +68,8 @@ class _TicketListScreenState extends ConsumerState<TicketListScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final state = ref.watch(ticketListProvider);
+    final theme = Theme.of(context);
+    final fabTheme = theme.floatingActionButtonTheme;
 
     return Scaffold(
       appBar: AppBar(
@@ -83,7 +82,12 @@ class _TicketListScreenState extends ConsumerState<TicketListScreen> {
           ),
         ],
       ),
+      // Material 3 paints a FAB in primaryContainer, a pale tint of the brand
+      // colour. Use the host's FAB theme when it sets one, else its primary.
       floatingActionButton: FloatingActionButton(
+        backgroundColor: fabTheme.backgroundColor ?? theme.colorScheme.primary,
+        foregroundColor:
+            fabTheme.foregroundColor ?? theme.colorScheme.onPrimary,
         onPressed: () => context.go('/tickets/create'),
         tooltip: l10n.t('create_ticket'),
         child: const Icon(Icons.add),
@@ -146,9 +150,8 @@ class _TicketCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final dateFormat = DateFormat('MMM d, y');
-    final timeFormat = DateFormat('h:mm a');
+    final scheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context);
 
     return Card(
       margin: const EdgeInsets.only(bottom: 10),
@@ -167,29 +170,35 @@ class _TicketCard extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.primary,
+                      color: scheme.primary,
                     ),
                   ),
                   const Spacer(),
                   if (ticket.slaBreached)
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 6, vertical: 2),
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
-                        color: AppColors.slaRed.withOpacity(0.1),
+                        color: AppColors.slaRed.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(4),
                         border: Border.all(
-                            color: AppColors.slaRed.withOpacity(0.3)),
+                          color: AppColors.slaRed.withValues(alpha: 0.3),
+                        ),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.warning_amber_rounded,
-                              size: 12, color: AppColors.slaRed),
+                          const Icon(
+                            Icons.warning_amber_rounded,
+                            size: 12,
+                            color: AppColors.slaRed,
+                          ),
                           const SizedBox(width: 3),
                           Text(
-                            'SLA',
-                            style: TextStyle(
+                            l10n.t('sla'),
+                            style: const TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.w700,
                               color: AppColors.slaRed,
@@ -213,10 +222,7 @@ class _TicketCard extends StatelessWidget {
               const SizedBox(height: 10),
               Row(
                 children: [
-                  StatusBadge(
-                    status: ticket.status,
-                    label: ticket.statusLabel,
-                  ),
+                  StatusBadge(status: ticket.status, label: ticket.statusLabel),
                   const SizedBox(width: 8),
                   PriorityBadge(
                     priority: ticket.priority,
@@ -230,18 +236,14 @@ class _TicketCard extends StatelessWidget {
                   Icon(
                     Icons.schedule,
                     size: 14,
-                    color: isDark
-                        ? AppColors.textSecondaryDark
-                        : AppColors.textSecondaryLight,
+                    color: scheme.onSurfaceVariant,
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    '${dateFormat.format(ticket.createdAt.toLocal())} ${timeFormat.format(ticket.createdAt.toLocal())}',
+                    AppLocalizations.formatDateTime(context, ticket.createdAt),
                     style: TextStyle(
                       fontSize: 12,
-                      color: isDark
-                          ? AppColors.textSecondaryDark
-                          : AppColors.textSecondaryLight,
+                      color: scheme.onSurfaceVariant,
                     ),
                   ),
                   if (ticket.department != null) ...[
@@ -249,9 +251,7 @@ class _TicketCard extends StatelessWidget {
                     Icon(
                       Icons.business,
                       size: 14,
-                      color: isDark
-                          ? AppColors.textSecondaryDark
-                          : AppColors.textSecondaryLight,
+                      color: scheme.onSurfaceVariant,
                     ),
                     const SizedBox(width: 4),
                     Flexible(
@@ -259,9 +259,7 @@ class _TicketCard extends StatelessWidget {
                         ticket.department!.name,
                         style: TextStyle(
                           fontSize: 12,
-                          color: isDark
-                              ? AppColors.textSecondaryDark
-                              : AppColors.textSecondaryLight,
+                          color: scheme.onSurfaceVariant,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),

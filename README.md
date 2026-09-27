@@ -22,8 +22,8 @@ A full-featured, embeddable support ticket UI for Flutter apps. Drop it into any
 - **Auth hooks** — Override login, logout, register, and token retrieval to integrate with your existing auth
 - **Riverpod state management** — Auth, tickets, knowledge base, and theme providers out of the box
 - **GoRouter-compatible** — Drop screens into your existing GoRouter navigation tree
-- **Dark mode** — Full dark and light theme support with customizable primary color and border radius
-- **i18n** — Localized in 4 languages (English, Spanish, French, German)
+- **Host theming** — Screens take the app's `ThemeData`, light or dark, so they match its brand
+- **i18n** — Localized in English, Spanish, French (with Canadian French) and German, errors and dates included
 - **Configurable** — API base URL, auth hooks, primary color, border radius, dark mode, default locale
 
 ## Requirements
@@ -81,6 +81,26 @@ EscalatedConfig(
 | `borderRadius` | `double?` | `8.0` | Border radius for cards, inputs, and buttons |
 | `darkMode` | `bool?` | `false` | Enable dark theme |
 | `defaultLocale` | `String?` | `'en'` | Default locale code (`en`, `es`, `fr`, `de`) |
+
+## Theming
+
+Every screen and widget takes its colours from the app's `ThemeData`, so they
+match the host without configuration:
+
+| Element | Comes from |
+|---------|------------|
+| Buttons, links, ticket references, selected chips | `colorScheme.primary` |
+| New-ticket button | `floatingActionButtonTheme`, else `colorScheme.primary` / `onPrimary` |
+| Cards, sheets, composer | `colorScheme.surface` and its `surfaceContainer*` tones |
+| Body and secondary text | `colorScheme.onSurface`, `onSurfaceVariant` |
+| Borders | `colorScheme.outlineVariant` |
+| Errors | `colorScheme.error` / `onError` |
+
+Status, priority and SLA badges keep fixed colours (`AppColors.statusColor`,
+`priorityColor`, `slaRed`...), since the colour carries the meaning.
+`EscalatedConfig.primaryColor` and `borderRadius` feed `AppTheme` and
+`themeProvider` for apps that build their theme from Escalated's; they do not
+override the app's own theme.
 
 ## Available Screens
 
@@ -175,16 +195,38 @@ When no auth hooks are provided, Escalated uses its built-in Dio HTTP client wit
 
 ## Internationalization
 
-Escalated ships with translations for four languages:
+Every string on screen goes through `AppLocalizations`, including the errors
+the providers report. Register the delegate alongside Flutter's:
+
+```dart
+MaterialApp(
+  localizationsDelegates: const [
+    AppLocalizations.delegate,
+    GlobalMaterialLocalizations.delegate,
+    GlobalWidgetsLocalizations.delegate,
+    GlobalCupertinoLocalizations.delegate,
+  ],
+  supportedLocales: AppLocalizations.supportedLocales,
+)
+```
 
 | Code | Language |
 |------|----------|
 | `en` | English |
 | `es` | Spanish |
 | `fr` | French |
+| `fr_CA` | Canadian French (overrides `fr` where usage differs, e.g. *courriel*) |
 | `de` | German |
 
-Set the default locale via `EscalatedConfig.defaultLocale` or let users switch in the Settings screen.
+A string is looked up in the regional table (`fr_CA`), then the language
+(`fr`), then English. Dates follow the app locale too; they use intl's date
+names, which `GlobalMaterialLocalizations` loads.
+
+Providers record a failure as a translation key (`failed_to_load_tickets`,
+`unexpected_error`, ...) unless the server refused the request with a
+`message` of its own (a 4xx), which is kept as the server wrote it.
+`AppLocalizations.t` translates a key and passes other text through, so
+`l10n.t(state.error!)` shows either correctly.
 
 ## Dependencies
 

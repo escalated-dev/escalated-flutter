@@ -5,10 +5,7 @@ import '../theme/colors.dart';
 class SatisfactionRating extends StatefulWidget {
   final void Function(int rating, String? comment) onSubmit;
 
-  const SatisfactionRating({
-    super.key,
-    required this.onSubmit,
-  });
+  const SatisfactionRating({super.key, required this.onSubmit});
 
   @override
   State<SatisfactionRating> createState() => _SatisfactionRatingState();
@@ -46,15 +43,17 @@ class _SatisfactionRatingState extends State<SatisfactionRating> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final scheme = Theme.of(context).colorScheme;
 
     if (_submitted) {
       return Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: AppColors.statusResolved.withOpacity(0.08),
+          color: AppColors.statusResolved.withValues(alpha: 0.08),
           borderRadius: AppRadius.cardBorder,
-          border: Border.all(color: AppColors.statusResolved.withOpacity(0.2)),
+          border: Border.all(
+            color: AppColors.statusResolved.withValues(alpha: 0.2),
+          ),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -76,23 +75,16 @@ class _SatisfactionRatingState extends State<SatisfactionRating> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark
-            ? Colors.white.withOpacity(0.03)
-            : Colors.grey.withOpacity(0.04),
+        color: scheme.surfaceContainerLow,
         borderRadius: AppRadius.cardBorder,
-        border: Border.all(
-          color: isDark ? AppColors.borderDark : AppColors.borderLight,
-        ),
+        border: Border.all(color: scheme.outlineVariant),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             l10n.t('how_was_experience'),
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 16),
           Row(
@@ -108,9 +100,7 @@ class _SatisfactionRatingState extends State<SatisfactionRating> {
                     size: 36,
                     color: starNumber <= _rating
                         ? const Color(0xFFFBBF24)
-                        : (isDark
-                            ? AppColors.textSecondaryDark
-                            : AppColors.textSecondaryLight),
+                        : scheme.onSurfaceVariant,
                   ),
                 ),
               );
@@ -125,9 +115,7 @@ class _SatisfactionRatingState extends State<SatisfactionRating> {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
-                    color: isDark
-                        ? AppColors.textSecondaryDark
-                        : AppColors.textSecondaryLight,
+                    color: scheme.onSurfaceVariant,
                   ),
                 ),
               ),

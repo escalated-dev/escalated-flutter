@@ -75,8 +75,9 @@ class _GuestCreateScreenState extends ConsumerState<GuestCreateScreen> {
         description: _descriptionController.text.trim(),
         priority: _selectedPriority,
         departmentId: _selectedDepartmentId,
-        attachmentPaths:
-            _files.isNotEmpty ? _files.map((f) => f.path).toList() : null,
+        attachmentPaths: _files.isNotEmpty
+            ? _files.map((f) => f.path).toList()
+            : null,
       );
 
       if (mounted) {
@@ -86,7 +87,7 @@ class _GuestCreateScreenState extends ConsumerState<GuestCreateScreen> {
       if (mounted) {
         setState(() => _isSubmitting = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('Failed to submit ticket. Please try again.'),
             backgroundColor: AppColors.statusEscalated,
           ),
@@ -98,7 +99,7 @@ class _GuestCreateScreenState extends ConsumerState<GuestCreateScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(
@@ -183,7 +184,7 @@ class _GuestCreateScreenState extends ConsumerState<GuestCreateScreen> {
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
-                value: _selectedPriority,
+                initialValue: _selectedPriority,
                 decoration: InputDecoration(
                   labelText: l10n.t('priority'),
                   prefixIcon: const Icon(Icons.flag_outlined),
@@ -218,7 +219,7 @@ class _GuestCreateScreenState extends ConsumerState<GuestCreateScreen> {
                 const LinearProgressIndicator()
               else if (_departments.isNotEmpty)
                 DropdownButtonFormField<int?>(
-                  value: _selectedDepartmentId,
+                  initialValue: _selectedDepartmentId,
                   decoration: InputDecoration(
                     labelText: l10n.t('department'),
                     prefixIcon: const Icon(Icons.business_outlined),
@@ -228,11 +229,7 @@ class _GuestCreateScreenState extends ConsumerState<GuestCreateScreen> {
                       value: null,
                       child: Text(
                         'None',
-                        style: TextStyle(
-                          color: isDark
-                              ? AppColors.textSecondaryDark
-                              : AppColors.textSecondaryLight,
-                        ),
+                        style: TextStyle(color: scheme.onSurfaceVariant),
                       ),
                     ),
                     ..._departments.map((dept) {
@@ -268,10 +265,7 @@ class _GuestCreateScreenState extends ConsumerState<GuestCreateScreen> {
                       ? const SizedBox(
                           width: 20,
                           height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.white,
-                          ),
+                          child: CircularProgressIndicator(strokeWidth: 2),
                         )
                       : Text(l10n.t('submit_ticket')),
                 ),
@@ -282,11 +276,7 @@ class _GuestCreateScreenState extends ConsumerState<GuestCreateScreen> {
                 children: [
                   Text(
                     l10n.t('already_have_account'),
-                    style: TextStyle(
-                      color: isDark
-                          ? AppColors.textSecondaryDark
-                          : AppColors.textSecondaryLight,
-                    ),
+                    style: TextStyle(color: scheme.onSurfaceVariant),
                   ),
                 ],
               ),

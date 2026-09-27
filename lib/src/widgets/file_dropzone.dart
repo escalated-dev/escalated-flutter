@@ -55,17 +55,17 @@ class FileDropzone extends StatelessWidget {
         // Non-local picks (blob/data URIs on web) have no path to upload from.
         if (path == null) continue;
 
-        newFiles.add(SelectedFile(
-          name: file.name,
-          path: path,
-          size: await file.length(),
-        ));
+        newFiles.add(
+          SelectedFile(name: file.name, path: path, size: await file.length()),
+        );
       }
 
       if (newFiles.isNotEmpty) {
         final combined = [...files, ...newFiles];
         onFilesChanged(
-          combined.length > maxFiles ? combined.take(maxFiles).toList() : combined,
+          combined.length > maxFiles
+              ? combined.take(maxFiles).toList()
+              : combined,
         );
       }
     } catch (_) {
@@ -82,7 +82,7 @@ class FileDropzone extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final scheme = Theme.of(context).colorScheme;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -93,12 +93,10 @@ class FileDropzone extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
             decoration: BoxDecoration(
-              color: isDark
-                  ? Colors.white.withOpacity(0.03)
-                  : Colors.grey.withOpacity(0.04),
+              color: scheme.surfaceContainerLow,
               borderRadius: AppRadius.baseBorder,
               border: Border.all(
-                color: isDark ? AppColors.borderDark : AppColors.borderLight,
+                color: scheme.outlineVariant,
                 style: BorderStyle.solid,
               ),
             ),
@@ -107,18 +105,14 @@ class FileDropzone extends StatelessWidget {
                 Icon(
                   Icons.cloud_upload_outlined,
                   size: 32,
-                  color: isDark
-                      ? AppColors.textSecondaryDark
-                      : AppColors.textSecondaryLight,
+                  color: scheme.onSurfaceVariant,
                 ),
                 const SizedBox(height: 8),
                 Text(
                   l10n.t('drop_or_browse'),
                   style: TextStyle(
                     fontSize: 14,
-                    color: isDark
-                        ? AppColors.textSecondaryDark
-                        : AppColors.textSecondaryLight,
+                    color: scheme.onSurfaceVariant,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -127,7 +121,7 @@ class FileDropzone extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.primary,
+                    color: scheme.primary,
                   ),
                 ),
               ],
@@ -143,13 +137,9 @@ class FileDropzone extends StatelessWidget {
               margin: const EdgeInsets.only(bottom: 6),
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: isDark
-                    ? Colors.white.withOpacity(0.04)
-                    : Colors.grey.withOpacity(0.06),
+                color: scheme.surfaceContainer,
                 borderRadius: AppRadius.baseBorder,
-                border: Border.all(
-                  color: isDark ? AppColors.borderDark : AppColors.borderLight,
-                ),
+                border: Border.all(color: scheme.outlineVariant),
               ),
               child: Row(
                 children: [
@@ -168,9 +158,7 @@ class FileDropzone extends StatelessWidget {
                           file.formattedSize,
                           style: TextStyle(
                             fontSize: 11,
-                            color: isDark
-                                ? AppColors.textSecondaryDark
-                                : AppColors.textSecondaryLight,
+                            color: scheme.onSurfaceVariant,
                           ),
                         ),
                       ],
@@ -181,8 +169,10 @@ class FileDropzone extends StatelessWidget {
                     onPressed: () => _removeFile(index),
                     tooltip: l10n.t('remove'),
                     padding: EdgeInsets.zero,
-                    constraints:
-                        const BoxConstraints(minWidth: 32, minHeight: 32),
+                    constraints: const BoxConstraints(
+                      minWidth: 32,
+                      minHeight: 32,
+                    ),
                   ),
                 ],
               ),
