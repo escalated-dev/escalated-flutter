@@ -126,4 +126,22 @@ const Map<String, String> en = {
   'language': 'Language',
   'confirm_logout': 'Log Out',
   'confirm_logout_message': 'Are you sure you want to log out?',
+
+  // Messages
+  'replies': 'Replies',
+  'none': 'None',
+  'sla': 'SLA',
+  'field_required': '{field} is required',
+  'unexpected_error': 'An unexpected error occurred.',
+  'failed_to_load_tickets': 'Failed to load tickets.',
+  'failed_to_load_ticket': 'Failed to load the ticket.',
+  'failed_to_create_ticket': 'Failed to create the ticket. Please try again.',
+  'failed_to_send_reply': 'Failed to send your reply.',
+  'failed_to_close_ticket': 'Failed to close the ticket.',
+  'failed_to_reopen_ticket': 'Failed to reopen the ticket.',
+  'failed_to_load_articles': 'Failed to load articles.',
+  'failed_to_load_article': 'Failed to load the article.',
+  'failed_to_sign_in': 'Sign-in failed. Check your email and password.',
+  'failed_to_register': 'Registration failed.',
+  'failed_to_update_profile': 'Failed to update your profile.',
 };

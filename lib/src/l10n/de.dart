@@ -126,5 +126,27 @@ const Map<String, String> de = {
   'system': 'System',
   'language': 'Sprache',
   'confirm_logout': 'Abmelden',
-  'confirm_logout_message': 'Sind Sie sicher, dass Sie sich abmelden m\u00f6chten?',
+  'confirm_logout_message':
+      'Sind Sie sicher, dass Sie sich abmelden m\u00f6chten?',
+
+  // Messages
+  'replies': 'Antworten',
+  'none': 'Keine',
+  'sla': 'SLA',
+  'field_required': '{field} ist erforderlich',
+  'unexpected_error': 'Ein unerwarteter Fehler ist aufgetreten.',
+  'failed_to_load_tickets': 'Tickets konnten nicht geladen werden.',
+  'failed_to_load_ticket': 'Das Ticket konnte nicht geladen werden.',
+  'failed_to_create_ticket':
+      'Das Ticket konnte nicht erstellt werden. Bitte versuchen Sie es erneut.',
+  'failed_to_send_reply': 'Ihre Antwort konnte nicht gesendet werden.',
+  'failed_to_close_ticket': 'Das Ticket konnte nicht geschlossen werden.',
+  'failed_to_reopen_ticket':
+      'Das Ticket konnte nicht wieder ge\u00f6ffnet werden.',
+  'failed_to_load_articles': 'Artikel konnten nicht geladen werden.',
+  'failed_to_load_article': 'Der Artikel konnte nicht geladen werden.',
+  'failed_to_sign_in':
+      'Anmeldung fehlgeschlagen. Pr\u00fcfen Sie E-Mail und Passwort.',
+  'failed_to_register': 'Registrierung fehlgeschlagen.',
+  'failed_to_update_profile': 'Ihr Profil konnte nicht aktualisiert werden.',
 };

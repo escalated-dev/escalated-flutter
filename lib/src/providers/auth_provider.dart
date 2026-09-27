@@ -8,6 +8,7 @@ import '../models/user.dart';
 import '../services/api_client.dart';
 import '../services/api_service.dart';
 import '../services/auth_hooks.dart';
+import 'error_message.dart';
 
 // Auth hooks provider — override this to swap in custom auth
 final authHooksProvider = Provider<AuthHooks>((ref) {
@@ -66,8 +67,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   final AuthHooks _authHooks;
   final ApiService _apiService;
 
-  AuthNotifier(this._authHooks, this._apiService)
-      : super(const AuthState()) {
+  AuthNotifier(this._authHooks, this._apiService) : super(const AuthState()) {
     checkAuth();
   }
 
@@ -77,10 +77,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
       final headers = await _authHooks.getAuthHeaders();
       if (headers.isNotEmpty) {
         final user = await _apiService.getProfile();
-        state = AuthState(
-          status: AuthStatus.authenticated,
-          user: user,
-        );
+        state = AuthState(status: AuthStatus.authenticated, user: user);
       } else {
         state = const AuthState(status: AuthStatus.unauthenticated);
       }
@@ -89,22 +86,15 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
-  Future<void> login({
-    required String email,
-    required String password,
-  }) async {
+  Future<void> login({required String email, required String password}) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
       await _authHooks.onLogin(email, password);
 
       final user = await _apiService.getProfile();
-      state = AuthState(
-        status: AuthStatus.authenticated,
-        user: user,
-      );
+      state = AuthState(status: AuthStatus.authenticated, user: user);
     } on DioException catch (e) {
-      final message = e.response?.data?['message'] as String? ??
-          'Login failed. Please check your credentials.';
+      final message = serverMessageOr(e, 'failed_to_sign_in');
       state = state.copyWith(
         isLoading: false,
         error: message,
@@ -113,7 +103,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: 'An unexpected error occurred.',
+        error: 'unexpected_error',
         status: AuthStatus.unauthenticated,
       );
     }
@@ -135,13 +125,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
       });
 
       final user = await _apiService.getProfile();
-      state = AuthState(
-        status: AuthStatus.authenticated,
-        user: user,
-      );
+      state = AuthState(status: AuthStatus.authenticated, user: user);
     } on DioException catch (e) {
-      final message = e.response?.data?['message'] as String? ??
-          'Registration failed. Please try again.';
+      final message = serverMessageOr(e, 'failed_to_register');
       state = state.copyWith(
         isLoading: false,
         error: message,
@@ -150,7 +136,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: 'An unexpected error occurred.',
+        error: 'unexpected_error',
         status: AuthStatus.unauthenticated,
       );
     }
@@ -172,12 +158,10 @@ class AuthNotifier extends StateNotifier<AuthState> {
       final user = await _apiService.updateProfile(name: name, email: email);
       state = state.copyWith(user: user, isLoading: false);
     } on DioException catch (e) {
-      final message = e.response?.data?['message'] as String? ??
-          'Failed to update profile.';
+      final message = serverMessageOr(e, 'failed_to_update_profile');
       state = state.copyWith(isLoading: false, error: message);
     } catch (e) {
-      state = state.copyWith(
-          isLoading: false, error: 'An unexpected error occurred.');
+      state = state.copyWith(isLoading: false, error: 'unexpected_error');
     }
   }
 }

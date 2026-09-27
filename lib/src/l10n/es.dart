@@ -126,5 +126,26 @@ const Map<String, String> es = {
   'system': 'Sistema',
   'language': 'Idioma',
   'confirm_logout': 'Cerrar Sesi\u00f3n',
-  'confirm_logout_message': '\u00bfEst\u00e1s seguro de que deseas cerrar sesi\u00f3n?',
+  'confirm_logout_message':
+      '\u00bfEst\u00e1s seguro de que deseas cerrar sesi\u00f3n?',
+
+  // Messages
+  'replies': 'Respuestas',
+  'none': 'Ninguno',
+  'sla': 'SLA',
+  'field_required': '{field} es obligatorio',
+  'unexpected_error': 'Ocurri\u00f3 un error inesperado.',
+  'failed_to_load_tickets': 'No se pudieron cargar los tickets.',
+  'failed_to_load_ticket': 'No se pudo cargar el ticket.',
+  'failed_to_create_ticket':
+      'No se pudo crear el ticket. Int\u00e9ntalo de nuevo.',
+  'failed_to_send_reply': 'No se pudo enviar tu respuesta.',
+  'failed_to_close_ticket': 'No se pudo cerrar el ticket.',
+  'failed_to_reopen_ticket': 'No se pudo reabrir el ticket.',
+  'failed_to_load_articles': 'No se pudieron cargar los art\u00edculos.',
+  'failed_to_load_article': 'No se pudo cargar el art\u00edculo.',
+  'failed_to_sign_in':
+      'No se pudo iniciar sesi\u00f3n. Revisa tu correo y contrase\u00f1a.',
+  'failed_to_register': 'No se pudo completar el registro.',
+  'failed_to_update_profile': 'No se pudo actualizar tu perfil.',
 };
