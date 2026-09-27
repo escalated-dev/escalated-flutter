@@ -21,10 +21,10 @@ class ApiService {
     required String email,
     required String password,
   }) async {
-    final response = await _dio.post('/auth/login', data: {
-      'email': email,
-      'password': password,
-    });
+    final response = await _dio.post(
+      '/auth/login',
+      data: {'email': email, 'password': password},
+    );
     return response.data as Map<String, dynamic>;
   }
 
@@ -34,12 +34,15 @@ class ApiService {
     required String password,
     required String passwordConfirmation,
   }) async {
-    final response = await _dio.post('/auth/register', data: {
-      'name': name,
-      'email': email,
-      'password': password,
-      'password_confirmation': passwordConfirmation,
-    });
+    final response = await _dio.post(
+      '/auth/register',
+      data: {
+        'name': name,
+        'email': email,
+        'password': password,
+        'password_confirmation': passwordConfirmation,
+      },
+    );
     return response.data as Map<String, dynamic>;
   }
 
@@ -52,14 +55,11 @@ class ApiService {
     return User.fromJson(response.data['data'] as Map<String, dynamic>);
   }
 
-  Future<User> updateProfile({
-    String? name,
-    String? email,
-  }) async {
-    final response = await _dio.put('/auth/profile', data: {
-      if (name != null) 'name': name,
-      if (email != null) 'email': email,
-    });
+  Future<User> updateProfile({String? name, String? email}) async {
+    final response = await _dio.put(
+      '/auth/profile',
+      data: {'name': ?name, 'email': ?email},
+    );
     return User.fromJson(response.data['data'] as Map<String, dynamic>);
   }
 
@@ -100,16 +100,18 @@ class ApiService {
     final formData = FormData.fromMap({
       'subject': subject,
       'description': description,
-      if (priority != null) 'priority': priority,
-      if (departmentId != null) 'department_id': departmentId,
+      'priority': ?priority,
+      'department_id': ?departmentId,
     });
 
     if (attachmentPaths != null) {
       for (int i = 0; i < attachmentPaths.length; i++) {
-        formData.files.add(MapEntry(
-          'attachments[$i]',
-          await MultipartFile.fromFile(attachmentPaths[i]),
-        ));
+        formData.files.add(
+          MapEntry(
+            'attachments[$i]',
+            await MultipartFile.fromFile(attachmentPaths[i]),
+          ),
+        );
       }
     }
 
@@ -122,21 +124,23 @@ class ApiService {
     required String body,
     List<String>? attachmentPaths,
   }) async {
-    final formData = FormData.fromMap({
-      'body': body,
-    });
+    final formData = FormData.fromMap({'body': body});
 
     if (attachmentPaths != null) {
       for (int i = 0; i < attachmentPaths.length; i++) {
-        formData.files.add(MapEntry(
-          'attachments[$i]',
-          await MultipartFile.fromFile(attachmentPaths[i]),
-        ));
+        formData.files.add(
+          MapEntry(
+            'attachments[$i]',
+            await MultipartFile.fromFile(attachmentPaths[i]),
+          ),
+        );
       }
     }
 
-    final response =
-        await _dio.post('/tickets/$reference/replies', data: formData);
+    final response = await _dio.post(
+      '/tickets/$reference/replies',
+      data: formData,
+    );
     return response.data as Map<String, dynamic>;
   }
 
@@ -155,10 +159,13 @@ class ApiService {
     required int rating,
     String? comment,
   }) async {
-    await _dio.post('/tickets/$reference/rate', data: {
-      'rating': rating,
-      if (comment != null && comment.isNotEmpty) 'comment': comment,
-    });
+    await _dio.post(
+      '/tickets/$reference/rate',
+      data: {
+        'rating': rating,
+        if (comment != null && comment.isNotEmpty) 'comment': comment,
+      },
+    );
   }
 
   // ─── Knowledge Base ────────────────────────────────────────────────
@@ -171,10 +178,13 @@ class ApiService {
     final queryParams = <String, dynamic>{
       'page': page,
       if (search != null && search.isNotEmpty) 'search': search,
-      if (categoryId != null) 'category_id': categoryId,
+      'category_id': ?categoryId,
     };
 
-    final response = await _dio.get('/kb/articles', queryParameters: queryParams);
+    final response = await _dio.get(
+      '/kb/articles',
+      queryParameters: queryParams,
+    );
     return PaginatedResponse.fromJson(
       response.data as Map<String, dynamic>,
       Article.fromJson,
@@ -190,9 +200,7 @@ class ApiService {
     required String slug,
     required bool helpful,
   }) async {
-    await _dio.post('/kb/articles/$slug/rate', data: {
-      'helpful': helpful,
-    });
+    await _dio.post('/kb/articles/$slug/rate', data: {'helpful': helpful});
   }
 
   Future<List<Map<String, dynamic>>> getCategories() async {
@@ -206,7 +214,9 @@ class ApiService {
   Future<List<Tag>> getTags() async {
     final response = await _dio.get('/tags');
     final List<dynamic> data = response.data['data'] ?? response.data;
-    return data.map((json) => Tag.fromJson(json as Map<String, dynamic>)).toList();
+    return data
+        .map((json) => Tag.fromJson(json as Map<String, dynamic>))
+        .toList();
   }
 
   // ─── Token Validation ────────────────────────────────────────────
@@ -243,16 +253,18 @@ class ApiService {
       'email': email,
       'subject': subject,
       'description': description,
-      if (priority != null) 'priority': priority,
-      if (departmentId != null) 'department_id': departmentId,
+      'priority': ?priority,
+      'department_id': ?departmentId,
     });
 
     if (attachmentPaths != null) {
       for (int i = 0; i < attachmentPaths.length; i++) {
-        formData.files.add(MapEntry(
-          'attachments[$i]',
-          await MultipartFile.fromFile(attachmentPaths[i]),
-        ));
+        formData.files.add(
+          MapEntry(
+            'attachments[$i]',
+            await MultipartFile.fromFile(attachmentPaths[i]),
+          ),
+        );
       }
     }
 
@@ -271,22 +283,23 @@ class ApiService {
     required String email,
     List<String>? attachmentPaths,
   }) async {
-    final formData = FormData.fromMap({
-      'body': body,
-      'email': email,
-    });
+    final formData = FormData.fromMap({'body': body, 'email': email});
 
     if (attachmentPaths != null) {
       for (int i = 0; i < attachmentPaths.length; i++) {
-        formData.files.add(MapEntry(
-          'attachments[$i]',
-          await MultipartFile.fromFile(attachmentPaths[i]),
-        ));
+        formData.files.add(
+          MapEntry(
+            'attachments[$i]',
+            await MultipartFile.fromFile(attachmentPaths[i]),
+          ),
+        );
       }
     }
 
-    final response =
-        await _dio.post('/guest/tickets/$reference/replies', data: formData);
+    final response = await _dio.post(
+      '/guest/tickets/$reference/replies',
+      data: formData,
+    );
     return response.data as Map<String, dynamic>;
   }
 }
