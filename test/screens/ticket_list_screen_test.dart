@@ -89,7 +89,7 @@ void main() {
     await tester.pumpWidget(_app(api, locale: const Locale('fr', 'CA')));
     await _settle(tester);
 
-    expect(find.text('Impossible de charger les tickets.'), findsOneWidget);
+    expect(find.text('Impossible de charger les billets.'), findsOneWidget);
     expect(find.text('Failed to load tickets.'), findsNothing);
     expect(find.text('Réessayer'), findsOneWidget);
   });
