@@ -23,9 +23,34 @@ void main() {
       final l10n = AppLocalizations(const Locale('fr', 'CA'));
       expect(l10n.t('email'), 'Courriel');
       // Not in fr_CA, so from fr rather than English.
+      expect(l10n.t('subject'), 'Sujet');
+    });
+
+    // Quebec French says « billet » for a support ticket; « ticket » is the
+    // France usage. Every fr string that names one needs a fr_CA override.
+    test('fr_CA says billet wherever fr says ticket', () {
+      final l10n = AppLocalizations(const Locale('fr', 'CA'));
+      final ticketKeys = fr.entries
+          .where((e) => e.value.toLowerCase().contains('ticket'))
+          .map((e) => e.key);
+
+      expect(ticketKeys, isNotEmpty);
+      for (final key in ticketKeys) {
+        expect(
+          frCA.containsKey(key),
+          isTrue,
+          reason: '$key has no fr_CA override',
+        );
+        expect(
+          l10n.t(key).toLowerCase(),
+          isNot(contains('ticket')),
+          reason: key,
+        );
+        expect(l10n.t(key).toLowerCase(), contains('billet'), reason: key);
+      }
       expect(
         l10n.t('failed_to_load_tickets'),
-        'Impossible de charger les tickets.',
+        'Impossible de charger les billets.',
       );
     });
 
@@ -114,7 +139,7 @@ void main() {
       );
       expect(
         AppLocalizations(const Locale('fr', 'CA')).t('create_ticket'),
-        'Créer un ticket',
+        'Créer un billet',
       );
       expect(
         AppLocalizations(const Locale('de')).t('not_helpful'),
