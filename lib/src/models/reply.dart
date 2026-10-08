@@ -1,4 +1,5 @@
 import 'attachment.dart';
+import 'json_read.dart';
 
 class ReplyAuthor {
   final int id;
@@ -12,19 +13,17 @@ class ReplyAuthor {
   });
 
   factory ReplyAuthor.fromJson(Map<String, dynamic> json) {
+    // Staff appear to a requester by display name only: `id` 0 and an
+    // empty `email`.
     return ReplyAuthor(
-      id: json['id'] as int,
-      name: json['name'] as String,
-      email: json['email'] as String,
+      id: readInt(json['id']),
+      name: readString(json['name']),
+      email: readString(json['email']),
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'email': email,
-    };
+    return {'id': id, 'name': name, 'email': email};
   }
 }
 
@@ -49,16 +48,19 @@ class Reply {
 
   factory Reply.fromJson(Map<String, dynamic> json) {
     return Reply(
-      id: json['id'] as int,
-      body: json['body'] as String,
-      isInternalNote: json['is_internal_note'] as bool? ?? false,
-      isPinned: json['is_pinned'] as bool? ?? false,
-      author: ReplyAuthor.fromJson(json['author'] as Map<String, dynamic>),
-      attachments: (json['attachments'] as List<dynamic>?)
-              ?.map((a) => Attachment.fromJson(a as Map<String, dynamic>))
-              .toList() ??
-          [],
-      createdAt: DateTime.parse(json['created_at'] as String),
+      id: readInt(json['id']),
+      body: readString(json['body']),
+      isInternalNote: json['is_internal_note'] == true,
+      isPinned: json['is_pinned'] == true,
+      author: ReplyAuthor.fromJson(
+        readMap(json['author']) ?? const <String, dynamic>{},
+      ),
+      attachments: readMapList(
+        json['attachments'],
+      ).map(Attachment.fromJson).toList(),
+      createdAt:
+          readDate(json['created_at']) ??
+          DateTime.fromMillisecondsSinceEpoch(0, isUtc: true),
     );
   }
 

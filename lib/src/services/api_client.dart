@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'auth_hooks.dart';
 
 class ApiClient {
@@ -21,11 +22,29 @@ class ApiClient {
     };
 
     dio.interceptors.add(_AuthInterceptor(authHooks));
-    dio.interceptors.add(LogInterceptor(
-      requestBody: false,
-      responseBody: false,
-    ));
+    if (kDebugMode) {
+      dio.interceptors.add(LogInterceptor(
+        requestHeader: false,
+        responseHeader: false,
+        requestBody: false,
+        responseBody: false,
+        logPrint: (line) => debugPrint(redactCredentials('$line')),
+      ));
+    }
   }
+}
+
+/// Removes guest access grants and bearer tokens from a log line.
+///
+/// Guest grants travel in the `/guest/tickets/{token}` route segment, so a
+/// logged URL would otherwise carry a working credential.
+String redactCredentials(String line) {
+  return line
+      .replaceAllMapped(
+        RegExp(r'(/guest/tickets/)[^/?#\s]+'),
+        (m) => '${m[1]}[redacted]',
+      )
+      .replaceAll(RegExp(r'Bearer\s+[^\s,]+'), 'Bearer [redacted]');
 }
 
 class _AuthInterceptor extends Interceptor {

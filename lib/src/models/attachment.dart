@@ -1,3 +1,5 @@
+import 'json_read.dart';
+
 class Attachment {
   final int id;
   final String filename;
@@ -15,11 +17,14 @@ class Attachment {
 
   factory Attachment.fromJson(Map<String, dynamic> json) {
     return Attachment(
-      id: json['id'] as int,
-      filename: json['filename'] as String,
-      mimeType: json['mime_type'] as String,
-      size: json['size'] as int,
-      url: json['url'] as String,
+      id: readInt(json['id']),
+      // The browser payload names it `original_filename`.
+      filename: readString(json['filename'] ?? json['original_filename']),
+      mimeType: readString(json['mime_type'], 'application/octet-stream'),
+      size: readInt(json['size']),
+      // Guest download links are signed and expire with the access grant;
+      // open them as given, without adding credentials.
+      url: readString(json['url']),
     );
   }
 

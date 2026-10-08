@@ -1,24 +1,20 @@
+import 'json_read.dart';
+
 class TicketRequester {
   final String name;
   final String email;
 
-  const TicketRequester({
-    required this.name,
-    required this.email,
-  });
+  const TicketRequester({required this.name, required this.email});
 
   factory TicketRequester.fromJson(Map<String, dynamic> json) {
     return TicketRequester(
-      name: json['name'] as String,
-      email: json['email'] as String,
+      name: readString(json['name']),
+      email: readString(json['email']),
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'name': name,
-      'email': email,
-    };
+    return {'name': name, 'email': email};
   }
 }
 
@@ -26,23 +22,17 @@ class TicketAssignee {
   final int id;
   final String name;
 
-  const TicketAssignee({
-    required this.id,
-    required this.name,
-  });
+  const TicketAssignee({required this.id, required this.name});
 
   factory TicketAssignee.fromJson(Map<String, dynamic> json) {
     return TicketAssignee(
-      id: json['id'] as int,
-      name: json['name'] as String,
+      id: readInt(json['id']),
+      name: readString(json['name']),
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-    };
+    return {'id': id, 'name': name};
   }
 }
 
@@ -50,23 +40,17 @@ class TicketDepartment {
   final int id;
   final String name;
 
-  const TicketDepartment({
-    required this.id,
-    required this.name,
-  });
+  const TicketDepartment({required this.id, required this.name});
 
   factory TicketDepartment.fromJson(Map<String, dynamic> json) {
     return TicketDepartment(
-      id: json['id'] as int,
-      name: json['name'] as String,
+      id: readInt(json['id']),
+      name: readString(json['name']),
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-    };
+    return {'id': id, 'name': name};
   }
 }
 
@@ -112,14 +96,16 @@ class TicketSummary {
       statusLabel: json['status_label'] as String,
       priority: json['priority'] as String,
       priorityLabel: json['priority_label'] as String,
-      requester:
-          TicketRequester.fromJson(json['requester'] as Map<String, dynamic>),
+      requester: TicketRequester.fromJson(
+        json['requester'] as Map<String, dynamic>,
+      ),
       assignee: json['assignee'] != null
           ? TicketAssignee.fromJson(json['assignee'] as Map<String, dynamic>)
           : null,
       department: json['department'] != null
           ? TicketDepartment.fromJson(
-              json['department'] as Map<String, dynamic>)
+              json['department'] as Map<String, dynamic>,
+            )
           : null,
       slaBreached: json['sla_breached'] as bool? ?? false,
       lastReplyAt: json['last_reply_at'] != null

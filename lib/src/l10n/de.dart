@@ -80,10 +80,40 @@ const Map<String, String> de = {
   'submit_ticket': 'Ticket einreichen',
   'your_name': 'Ihr Name',
   'your_email': 'Ihre E-Mail',
-  'bookmark_notice':
-      'Setzen Sie ein Lesezeichen f\u00fcr diese Seite, um den Status Ihres Tickets sp\u00e4ter zu \u00fcberpr\u00fcfen.',
-  'copy_link': 'Link kopieren',
   'sign_in': 'Anmelden',
+
+  // Verified guest access
+  'guest_access_expires':
+      'Der Zugriff auf diese Seite endet am {date}. Bewahren Sie Ihre Referenz {reference} auf, um dieses Ticket wiederzufinden.',
+  'copy_reference': 'Referenz kopieren',
+  'reference_copied': 'Referenz kopiert',
+  'send_code': 'Code senden',
+  'resend_code': 'Neuen Code senden',
+  'verification_code': 'Bestätigungscode',
+  'verify_and_submit': 'Bestätigen und absenden',
+  'verify': 'Bestätigen',
+  'verification_sent':
+      'Wir haben einen Code an {email} gesendet. Er läuft in 10 Minuten ab.',
+  'verification_invalid':
+      'Dieser Code ist ungültig, abgelaufen oder bereits verwendet. Fordern Sie einen neuen Code an.',
+  'verification_explainer':
+      'Wir senden Ihnen einen Code per E-Mail, um Ihre Adresse zu bestätigen.',
+  'guest_rate_limited':
+      'Zu viele Versuche. Versuchen Sie es in {seconds} Sekunden erneut.',
+  'guest_rate_limited_later':
+      'Zu viele Versuche. Versuchen Sie es später erneut.',
+  'guest_access_required':
+      'Ihr Zugriff auf dieses Ticket ist abgelaufen. Bestätigen Sie Ihre E-Mail-Adresse, um es erneut zu öffnen.',
+  'guest_tickets_disabled': 'Gast-Tickets sind nicht verfügbar.',
+  'verify_email': 'E-Mail bestätigen',
+  'find_ticket': 'Ihr Ticket finden',
+  'find_ticket_hint':
+      'Geben Sie Ihre Ticketreferenz und die verwendete E-Mail-Adresse ein. Wir senden Ihnen einen Code.',
+  'no_matching_tickets':
+      'Kein Ticket passt zu dieser Referenz und E-Mail-Adresse.',
+  'failed_to_send_code':
+      'Der Code konnte nicht gesendet werden. Bitte versuchen Sie es erneut.',
+  'invalid_email': 'Geben Sie eine gültige E-Mail-Adresse ein',
 
   // Filters
   'search_tickets': 'Tickets suchen...',

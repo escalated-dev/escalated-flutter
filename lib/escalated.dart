@@ -29,10 +29,14 @@ export 'src/theme/app_theme.dart';
 export 'src/services/auth_hooks.dart';
 export 'src/services/api_client.dart';
 export 'src/services/api_service.dart';
+export 'src/services/guest_access_errors.dart';
+export 'src/services/guest_access_service.dart';
+export 'src/services/guest_access_store.dart';
 
 // Models
 export 'src/models/user.dart';
 export 'src/models/ticket.dart';
+export 'src/models/guest_access.dart';
 export 'src/models/ticket_summary.dart';
 export 'src/models/reply.dart';
 export 'src/models/attachment.dart';
@@ -44,6 +48,7 @@ export 'src/models/paginated_response.dart';
 // Providers
 export 'src/providers/auth_provider.dart';
 export 'src/providers/ticket_provider.dart';
+export 'src/providers/guest_provider.dart';
 export 'src/providers/kb_provider.dart';
 export 'src/providers/theme_provider.dart';
 
@@ -71,6 +76,7 @@ export 'src/screens/kb/kb_list_screen.dart';
 export 'src/screens/kb/kb_article_screen.dart';
 export 'src/screens/guest/guest_create_screen.dart';
 export 'src/screens/guest/guest_ticket_screen.dart';
+export 'src/screens/guest/guest_lookup_screen.dart';
 export 'src/screens/settings/settings_screen.dart';
 
 // Router

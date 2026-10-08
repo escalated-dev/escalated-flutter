@@ -51,6 +51,14 @@ final _router = GoRouter(
       path: '/guest/create',
       builder: (context, state) => const GuestCreateScreen(),
     ),
+    // Before '/guest/:reference', which would otherwise match it.
+    GoRoute(
+      path: '/guest/lookup',
+      builder: (context, state) => GuestLookupScreen(
+        initialReference: state.uri.queryParameters['reference'],
+      ),
+    ),
+    // The ticket reference. Access grants never travel in the route.
     GoRoute(
       path: '/guest/:reference',
       builder: (context, state) => GuestTicketScreen(

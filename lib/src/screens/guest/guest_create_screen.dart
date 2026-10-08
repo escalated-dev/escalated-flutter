@@ -3,9 +3,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/department.dart';
+import '../../models/guest_access.dart';
 import '../../providers/auth_provider.dart';
+import '../../providers/guest_provider.dart';
+import '../../services/guest_access_errors.dart';
 import '../../theme/colors.dart';
 import '../../widgets/file_dropzone.dart';
+import 'guest_messages.dart';
+
+/// Guest ticket submission with email verification.
+///
+/// The first submit emails a code to the guest; the second sends the ticket
+/// with that code. The new ticket's access grant is stored per ticket, and
+/// the screen moves to `/guest/{reference}`.
 
 class GuestCreateScreen extends ConsumerStatefulWidget {
   const GuestCreateScreen({super.key});
@@ -20,6 +30,10 @@ class _GuestCreateScreenState extends ConsumerState<GuestCreateScreen> {
   final _emailController = TextEditingController();
   final _subjectController = TextEditingController();
   final _descriptionController = TextEditingController();
+  final _codeController = TextEditingController();
+  GuestVerificationChallenge? _challenge;
+  String? _codeError;
+  bool _isRequestingCode = false;
   String _selectedPriority = 'medium';
   int? _selectedDepartmentId;
   List<SelectedFile> _files = [];
@@ -33,6 +47,19 @@ class _GuestCreateScreenState extends ConsumerState<GuestCreateScreen> {
   void initState() {
     super.initState();
     _loadDepartments();
+    _emailController.addListener(_onEmailChanged);
+  }
+
+  // A code is bound to the address it was sent to.
+  void _onEmailChanged() {
+    final challenge = _challenge;
+    if (challenge != null && _emailController.text.trim() != challenge.email) {
+      setState(() {
+        _challenge = null;
+        _codeError = null;
+        _codeController.clear();
+      });
+    }
   }
 
   @override
@@ -41,6 +68,7 @@ class _GuestCreateScreenState extends ConsumerState<GuestCreateScreen> {
     _emailController.dispose();
     _subjectController.dispose();
     _descriptionController.dispose();
+    _codeController.dispose();
     super.dispose();
   }
 
@@ -61,39 +89,86 @@ class _GuestCreateScreenState extends ConsumerState<GuestCreateScreen> {
     }
   }
 
+  Future<void> _requestCode() async {
+    setState(() {
+      _isRequestingCode = true;
+      _codeError = null;
+    });
+    try {
+      final challenge = await ref
+          .read(guestAccessServiceProvider)
+          .requestCode(
+            email: _emailController.text.trim(),
+            purpose: GuestVerificationPurpose.ticket,
+          );
+      if (!mounted) return;
+      setState(() {
+        _challenge = challenge;
+        _codeController.clear();
+      });
+    } catch (e) {
+      if (mounted) _showError(e, 'failed_to_send_code');
+    } finally {
+      if (mounted) setState(() => _isRequestingCode = false);
+    }
+  }
+
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
-    setState(() => _isSubmitting = true);
+    final challenge = _challenge;
+    if (challenge == null || challenge.isExpired) {
+      await _requestCode();
+      return;
+    }
+
+    setState(() {
+      _isSubmitting = true;
+      _codeError = null;
+    });
 
     try {
-      final api = ref.read(apiServiceProvider);
-      final ticket = await api.createGuestTicket(
-        name: _nameController.text.trim(),
-        email: _emailController.text.trim(),
-        subject: _subjectController.text.trim(),
-        description: _descriptionController.text.trim(),
-        priority: _selectedPriority,
-        departmentId: _selectedDepartmentId,
-        attachmentPaths: _files.isNotEmpty
-            ? _files.map((f) => f.path).toList()
-            : null,
-      );
+      final ticket = await ref
+          .read(guestAccessServiceProvider)
+          .createTicket(
+            challenge: challenge,
+            code: _codeController.text,
+            name: _nameController.text.trim(),
+            subject: _subjectController.text.trim(),
+            description: _descriptionController.text.trim(),
+            priority: _selectedPriority,
+            departmentId: _selectedDepartmentId,
+            attachmentPaths: _files.isNotEmpty
+                ? _files.map((f) => f.path).toList()
+                : null,
+          );
 
       if (mounted) {
-        context.go('/guest/${ticket.guestRouteReference}');
+        context.go('/guest/${Uri.encodeComponent(ticket.reference)}');
+      }
+    } on GuestVerificationFailedException catch (e) {
+      if (mounted) {
+        setState(() {
+          _isSubmitting = false;
+          _codeError = AppLocalizations.of(context).t(e.messageKey);
+        });
       }
     } catch (e) {
       if (mounted) {
         setState(() => _isSubmitting = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to submit ticket. Please try again.'),
-            backgroundColor: AppColors.statusEscalated,
-          ),
-        );
+        _showError(e, 'failed_to_create_ticket');
       }
     }
+  }
+
+  void _showError(Object error, String fallbackKey) {
+    final l10n = AppLocalizations.of(context);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(guestErrorText(l10n, error, fallbackKey)),
+        backgroundColor: AppColors.statusEscalated,
+      ),
+    );
   }
 
   @override
@@ -144,8 +219,8 @@ class _GuestCreateScreenState extends ConsumerState<GuestCreateScreen> {
                   if (value == null || value.trim().isEmpty) {
                     return '${l10n.t('email')} is required';
                   }
-                  if (!value.contains('@')) {
-                    return 'Enter a valid email address';
+                  if (!looksLikeEmail(value.trim())) {
+                    return l10n.t('invalid_email');
                   }
                   return null;
                 },
@@ -257,18 +332,51 @@ class _GuestCreateScreenState extends ConsumerState<GuestCreateScreen> {
                 onFilesChanged: (files) => setState(() => _files = files),
               ),
               const SizedBox(height: 24),
+              if (_challenge == null)
+                Text(
+                  l10n.t('verification_explainer'),
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: scheme.onSurfaceVariant,
+                  ),
+                )
+              else ...[
+                GuestCodeNotice(
+                  email: _challenge!.email,
+                  busy: _isRequestingCode || _isSubmitting,
+                  onResend: _requestCode,
+                ),
+                GuestCodeField(
+                  controller: _codeController,
+                  errorText: _codeError,
+                  onSubmitted: (_) => _submit(),
+                ),
+              ],
+              const SizedBox(height: 16),
               SizedBox(
                 height: 48,
                 child: ElevatedButton(
-                  onPressed: _isSubmitting ? null : _submit,
-                  child: _isSubmitting
+                  key: const ValueKey('guest-create-submit'),
+                  onPressed: _isSubmitting || _isRequestingCode
+                      ? null
+                      : _submit,
+                  child: _isSubmitting || _isRequestingCode
                       ? const SizedBox(
                           width: 20,
                           height: 20,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                      : Text(l10n.t('submit_ticket')),
+                      : Text(
+                          _challenge == null
+                              ? l10n.t('submit_ticket')
+                              : l10n.t('verify_and_submit'),
+                        ),
                 ),
+              ),
+              const SizedBox(height: 8),
+              TextButton(
+                onPressed: () => context.go('/guest/lookup'),
+                child: Text(l10n.t('find_ticket')),
               ),
               const SizedBox(height: 16),
               Row(
