@@ -24,7 +24,7 @@ dependencies:
   # flutter_html 3.0.0 calls a query-selector function that html 0.15.7
   # removed, so with 0.15.7 nothing importing ReplyThread compiles. Held until
   # flutter_html ships a release that builds against it.
-  html: '>=0.15.4 <0.15.7'
+  html: ^0.15.4
   intl: '>=0.19.0 <0.21.0'
   shimmer: '>=3.0.0 <5.0.0'
 
