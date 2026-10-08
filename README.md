@@ -16,7 +16,7 @@ A full-featured, embeddable support ticket UI for Flutter apps. Drop it into any
 
 - **Ticket management** — Create, view, filter, and reply to support tickets with file attachments
 - **Knowledge base** — Searchable article list with HTML rendering for self-service support
-- **Guest tickets** — Anonymous ticket submission without requiring authentication
+- **Guest tickets** — Ticket submission without an account, verified by an emailed code, with expiring per-ticket access
 - **SLA tracking** — Real-time SLA countdown timers on ticket detail views
 - **Satisfaction ratings** — Post-resolution CSAT ratings with star display
 - **Auth hooks** — Override login, logout, register, and token retrieval to integrate with your existing auth
@@ -113,8 +113,9 @@ override the app's own theme.
 | `TicketDetailScreen` | Full ticket thread with replies and metadata |
 | `KBListScreen` | Knowledge base article listing |
 | `KBArticleScreen` | Single article view with HTML rendering |
-| `GuestCreateScreen` | Anonymous ticket submission |
-| `GuestTicketScreen` | Guest ticket view via token |
+| `GuestCreateScreen` | Guest ticket submission with email verification |
+| `GuestTicketScreen` | Guest ticket view by reference, using the stored access grant |
+| `GuestLookupScreen` | Find a guest ticket by reference and verified email; renews access |
 | `SettingsScreen` | User preferences and locale selection |
 | `TicketFiltersScreen` | Advanced ticket filter controls |
 
@@ -134,15 +135,35 @@ override the app's own theme.
 | `LoadingShimmer` | Shimmer loading placeholder |
 | `ErrorView` | Error state with retry action |
 
+## Guest access
+
+Guest tickets need the guest to prove they can read their mailbox. The server
+emails an eight-digit code, the app sends it back with the ticket (or with a
+lookup), and the server answers with an expiring access grant for that ticket.
+`GuestAccessService` runs this flow and keeps each grant in the device's secure
+storage, keyed by ticket reference. Grants never appear in routes or copied
+links; guest routes take the ticket reference (`/guest/ESC-00042`).
+
+When a grant runs out or the server refuses it, `GuestTicketScreen` asks the
+guest to verify again and `GuestLookupScreen` issues a fresh one. A 429 is
+reported with the server's `Retry-After`.
+
+This needs a backend with verified guest access (escalated-laravel 1.9+,
+escalated-phoenix 0.2+). **Upgrading from 1.x:** permanent guest tokens and
+links built from them no longer work. Add a route for `/guest/lookup` before
+`/guest/:reference`, and see [docs/guest-access.md](docs/guest-access.md) for
+the API changes.
+
 ## Providers
 
-Escalated uses Riverpod for state management. Four providers are available:
+Escalated uses Riverpod for state management. The main providers are:
 
 | Provider | Description |
 |----------|-------------|
 | `authProvider` | Authentication state, login/logout/register actions |
 | `ticketsProvider` | Ticket list, creation, replies, and filtering |
 | `kbProvider` | Knowledge base articles and search |
+| `guestTicketProvider` | A guest ticket opened with its stored access grant |
 | `themeProvider` | Theme configuration (colors, dark mode, locale) |
 
 ### Riverpod 3 and the legacy import
