@@ -42,7 +42,10 @@ class FileDropzone extends StatelessWidget {
       //       FilePickerResult wrapper, so cancelling yields an empty list
       //       rather than null;
       //   v12 also replaced PlatformFile.size (sync int) with length()
-      //       (async), which is why this builds the list in a loop.
+      //       (async), which is why this builds the list in a loop;
+      //   v13 made length() return Future<int?>, null meaning the size could
+      //       not be read. Typing the result as int? compiles against both
+      //       12 and 13; an unreadable size shows as 0 B.
       // allowMultiple is deprecated in v12 and defaults to true, which is what
       // this dropzone wants.
       final picked = await FilePicker.pickFiles(type: FileType.any);
@@ -55,8 +58,10 @@ class FileDropzone extends StatelessWidget {
         // Non-local picks (blob/data URIs on web) have no path to upload from.
         if (path == null) continue;
 
+        final int? length = await file.length();
+
         newFiles.add(
-          SelectedFile(name: file.name, path: path, size: await file.length()),
+          SelectedFile(name: file.name, path: path, size: length ?? 0),
         );
       }
 
