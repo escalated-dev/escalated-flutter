@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../l10n/app_localizations.dart';
-import '../../providers/ticket_provider.dart';
+import '../../providers/guest_provider.dart';
 import '../../theme/colors.dart';
 import '../../widgets/error_view.dart';
 import '../../widgets/loading_shimmer.dart';
@@ -10,7 +11,14 @@ import '../../widgets/priority_badge.dart';
 import '../../widgets/reply_thread.dart';
 import '../../widgets/sla_timer.dart';
 import '../../widgets/status_badge.dart';
+import 'guest_messages.dart';
 
+/// A guest ticket, opened with the access grant stored for it.
+///
+/// [reference] is the ticket reference. Access grants are not part of the
+/// route: they are kept per ticket by `GuestAccessStore`. When there is no
+/// working grant (it ran out, was replaced, or the link is from before
+/// verified access) the screen asks the guest to verify their email again.
 class GuestTicketScreen extends ConsumerStatefulWidget {
   final String reference;
 
@@ -39,26 +47,40 @@ class _GuestTicketScreenState extends ConsumerState<GuestTicketScreen> {
     super.dispose();
   }
 
-  Future<void> _sendReply() async {
+  Future<void> _sendReply({required bool needsEmail}) async {
     final body = _replyController.text.trim();
     final email = _emailController.text.trim();
-    if (body.isEmpty || email.isEmpty) return;
+    if (body.isEmpty || (needsEmail && email.isEmpty)) return;
 
     final success = await ref
         .read(guestTicketProvider.notifier)
-        .sendReply(reference: widget.reference, body: body, email: email);
+        .sendReply(
+          reference: widget.reference,
+          body: body,
+          email: needsEmail ? email : null,
+        );
 
     if (success && mounted) {
       _replyController.clear();
     }
   }
 
-  void _copyLink() {
-    final link = 'escalated://guest/${widget.reference}';
-    Clipboard.setData(ClipboardData(text: link));
+  // Share the reference, never the access grant: anyone holding the grant
+  // could read the ticket until it runs out.
+  void _copyReference(AppLocalizations l10n) {
+    Clipboard.setData(ClipboardData(text: widget.reference));
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(const SnackBar(content: Text('Link copied to clipboard')));
+    ).showSnackBar(SnackBar(content: Text(l10n.t('reference_copied'))));
+  }
+
+  void _verifyAgain() {
+    context.go(
+      Uri(
+        path: '/guest/lookup',
+        queryParameters: {'reference': widget.reference},
+      ).toString(),
+    );
   }
 
   @override
@@ -73,14 +95,18 @@ class _GuestTicketScreenState extends ConsumerState<GuestTicketScreen> {
     );
   }
 
-  Widget _buildBody(TicketDetailState state, AppLocalizations l10n) {
+  Widget _buildBody(GuestTicketState state, AppLocalizations l10n) {
+    if (state.needsVerification) {
+      return _AccessRequired(onVerify: _verifyAgain);
+    }
+
     if (state.isLoading && state.ticket == null) {
       return const ShimmerCard();
     }
 
     if (state.error != null && state.ticket == null) {
       return ErrorView(
-        message: state.error,
+        message: _errorText(state, l10n),
         onRetry: () =>
             ref.read(guestTicketProvider.notifier).loadTicket(widget.reference),
       );
@@ -90,6 +116,9 @@ class _GuestTicketScreenState extends ConsumerState<GuestTicketScreen> {
     if (ticket == null) return const ShimmerCard();
 
     final scheme = Theme.of(context).colorScheme;
+    final expiresAt = state.grant?.expiresAt;
+    final grantEmail = state.grant?.email;
+    final needsEmail = grantEmail == null || grantEmail.isEmpty;
 
     return Column(
       children: [
@@ -99,7 +128,7 @@ class _GuestTicketScreenState extends ConsumerState<GuestTicketScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Bookmark notice
+                // Access notice: when it ends, and how to get back in.
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
@@ -112,14 +141,22 @@ class _GuestTicketScreenState extends ConsumerState<GuestTicketScreen> {
                   child: Row(
                     children: [
                       const Icon(
-                        Icons.bookmark_outline,
+                        Icons.lock_clock_outlined,
                         color: AppColors.statusOpen,
                         size: 20,
                       ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          l10n.t('bookmark_notice'),
+                          l10n.tf('guest_access_expires', {
+                            'date': expiresAt != null
+                                ? AppLocalizations.formatDateTime(
+                                    context,
+                                    expiresAt,
+                                  )
+                                : '-',
+                            'reference': ticket.reference,
+                          }),
                           style: const TextStyle(
                             fontSize: 13,
                             color: AppColors.statusOpen,
@@ -127,9 +164,9 @@ class _GuestTicketScreenState extends ConsumerState<GuestTicketScreen> {
                         ),
                       ),
                       TextButton.icon(
-                        onPressed: _copyLink,
+                        onPressed: () => _copyReference(l10n),
                         icon: const Icon(Icons.copy, size: 16),
-                        label: Text(l10n.t('copy_link')),
+                        label: Text(l10n.t('copy_reference')),
                         style: TextButton.styleFrom(
                           foregroundColor: AppColors.statusOpen,
                           padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -282,16 +319,25 @@ class _GuestTicketScreenState extends ConsumerState<GuestTicketScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  TextField(
-                    controller: _emailController,
-                    decoration: InputDecoration(
-                      hintText: l10n.t('your_email'),
-                      prefixIcon: const Icon(Icons.email_outlined, size: 20),
-                      isDense: true,
+                  if (state.error != null) ...[
+                    Text(
+                      _errorText(state, l10n),
+                      style: TextStyle(color: scheme.error, fontSize: 13),
                     ),
-                    keyboardType: TextInputType.emailAddress,
-                  ),
-                  const SizedBox(height: 8),
+                    const SizedBox(height: 8),
+                  ],
+                  if (needsEmail) ...[
+                    TextField(
+                      controller: _emailController,
+                      decoration: InputDecoration(
+                        hintText: l10n.t('your_email'),
+                        prefixIcon: const Icon(Icons.email_outlined, size: 20),
+                        isDense: true,
+                      ),
+                      keyboardType: TextInputType.emailAddress,
+                    ),
+                    const SizedBox(height: 8),
+                  ],
                   TextField(
                     controller: _replyController,
                     maxLines: 3,
@@ -306,7 +352,9 @@ class _GuestTicketScreenState extends ConsumerState<GuestTicketScreen> {
                   Align(
                     alignment: Alignment.centerRight,
                     child: ElevatedButton.icon(
-                      onPressed: state.isSendingReply ? null : _sendReply,
+                      onPressed: state.isSendingReply
+                          ? null
+                          : () => _sendReply(needsEmail: needsEmail),
                       icon: state.isSendingReply
                           ? const SizedBox(
                               width: 16,
@@ -322,6 +370,49 @@ class _GuestTicketScreenState extends ConsumerState<GuestTicketScreen> {
             ),
           ),
       ],
+    );
+  }
+}
+
+String _errorText(GuestTicketState state, AppLocalizations l10n) {
+  final error = state.error ?? 'unexpected_error';
+  if (error == 'guest_rate_limited' || error == 'guest_rate_limited_later') {
+    return rateLimitText(l10n, state.retryAfter);
+  }
+  return l10n.t(error);
+}
+
+class _AccessRequired extends StatelessWidget {
+  const _AccessRequired({required this.onVerify});
+
+  final VoidCallback onVerify;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final scheme = Theme.of(context).colorScheme;
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.lock_outline, size: 48, color: scheme.onSurfaceVariant),
+            const SizedBox(height: 16),
+            Text(
+              l10n.t('guest_access_required'),
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 15),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              key: const ValueKey('guest-verify-again'),
+              onPressed: onVerify,
+              child: Text(l10n.t('verify_email')),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

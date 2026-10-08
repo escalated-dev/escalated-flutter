@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'services/auth_hooks.dart';
+import 'services/guest_access_store.dart';
 
 /// Configuration for the Escalated support library.
 ///
@@ -25,6 +26,10 @@ class EscalatedConfig {
   /// Optional border radius override for UI elements.
   final double? borderRadius;
 
+  /// Where verified guest access grants are kept, one per ticket.
+  /// Defaults to [SecureGuestAccessStore] (keychain/keystore).
+  final GuestAccessStore guestAccessStore;
+
   /// Creates a new [EscalatedConfig].
   ///
   /// [apiBaseUrl] is required. All other parameters have sensible defaults.
@@ -35,5 +40,7 @@ class EscalatedConfig {
     this.darkMode = false,
     this.primaryColor,
     this.borderRadius,
-  }) : authHooks = authHooks ?? DefaultAuthHooks(apiBaseUrl: apiBaseUrl);
+    GuestAccessStore? guestAccessStore,
+  }) : authHooks = authHooks ?? DefaultAuthHooks(apiBaseUrl: apiBaseUrl),
+       guestAccessStore = guestAccessStore ?? SecureGuestAccessStore();
 }

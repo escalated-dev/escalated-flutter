@@ -1,3 +1,4 @@
+import 'json_read.dart';
 import 'reply.dart';
 import 'tag.dart';
 import 'ticket_summary.dart';
@@ -9,10 +10,20 @@ class TicketStatusField {
   const TicketStatusField({required this.value, required this.label});
 
   factory TicketStatusField.fromJson(Map<String, dynamic> json) {
+    final value = readString(json['value']);
     return TicketStatusField(
-      value: json['value'] as String,
-      label: json['label'] as String,
+      value: value,
+      label: readString(json['label'], value),
     );
+  }
+
+  /// Reads `{value, label}`, or a bare status string as both.
+  factory TicketStatusField.read(Object? json) {
+    if (json is Map) {
+      return TicketStatusField.fromJson(Map<String, dynamic>.from(json));
+    }
+    final value = readString(json);
+    return TicketStatusField(value: value, label: value);
   }
 
   Map<String, dynamic> toJson() {
@@ -37,11 +48,11 @@ class TicketSla {
 
   factory TicketSla.fromJson(Map<String, dynamic> json) {
     return TicketSla(
-      firstResponseDueAt: json['first_response_due_at'] as String?,
-      firstResponseAt: json['first_response_at'] as String?,
-      firstResponseBreached: json['first_response_breached'] as bool? ?? false,
-      resolutionDueAt: json['resolution_due_at'] as String?,
-      resolutionBreached: json['resolution_breached'] as bool? ?? false,
+      firstResponseDueAt: readOptionalString(json['first_response_due_at']),
+      firstResponseAt: readOptionalString(json['first_response_at']),
+      firstResponseBreached: json['first_response_breached'] == true,
+      resolutionDueAt: readOptionalString(json['resolution_due_at']),
+      resolutionBreached: json['resolution_breached'] == true,
     );
   }
 
@@ -68,10 +79,12 @@ class TicketAssigneeDetail {
   });
 
   factory TicketAssigneeDetail.fromJson(Map<String, dynamic> json) {
+    // A requester sees the assigned agent by display name only: `id` 0 and
+    // an empty `email`.
     return TicketAssigneeDetail(
-      id: json['id'] as int,
-      name: json['name'] as String,
-      email: json['email'] as String,
+      id: readInt(json['id']),
+      name: readString(json['name']),
+      email: readString(json['email']),
     );
   }
 
@@ -83,7 +96,15 @@ class TicketAssigneeDetail {
 class Ticket {
   final int id;
   final String reference;
+
+  /// The verified guest access grant returned when a guest ticket is created.
+  ///
+  /// An opaque, expiring credential: do not parse it, put it in a URL the
+  /// user can share, or log it. `GuestAccessService` stores it per ticket.
   final String? guestAccessToken;
+
+  /// When [guestAccessToken] stops working.
+  final DateTime? guestAccessExpiresAt;
   final String subject;
   final String description;
   final TicketStatusField status;
@@ -108,6 +129,7 @@ class Ticket {
     required this.id,
     required this.reference,
     this.guestAccessToken,
+    this.guestAccessExpiresAt,
     required this.subject,
     required this.description,
     required this.status,
@@ -129,62 +151,60 @@ class Ticket {
     required this.updatedAt,
   });
 
+  /// Reads a ticket payload.
+  ///
+  /// Tolerant of the allow-listed payload a verified guest receives: staff
+  /// by display name only, `metadata` as `{}` or `[]`, and backends that
+  /// omit the id or send statuses as plain strings.
   factory Ticket.fromJson(Map<String, dynamic> json) {
-    final statusJson = Map<String, dynamic>.from(
-      (json['status'] as Map?) ?? const <String, dynamic>{},
-    );
-    final priorityJson = Map<String, dynamic>.from(
-      (json['priority'] as Map?) ?? const <String, dynamic>{},
-    );
-    final requesterJson = Map<String, dynamic>.from(
-      (json['requester'] as Map?) ?? const <String, dynamic>{},
-    );
+    final createdAt = readDate(json['created_at']);
+    final updatedAt = readDate(json['updated_at']);
+    final assignee = readMap(json['assignee']);
+    final department = readMap(json['department']);
+    final sla = readMap(json['sla']);
 
     return Ticket(
-      id: json['id'] as int,
-      reference: json['reference'] as String,
-      guestAccessToken: json['guest_access_token'] as String?,
-      subject: json['subject'] as String,
-      description: json['description'] as String? ?? '',
-      status: TicketStatusField.fromJson(statusJson),
-      priority: TicketStatusField.fromJson(priorityJson),
-      channel: json['channel'] as String? ?? 'web',
-      metadata: Map<String, dynamic>.from(
-        (json['metadata'] as Map?) ?? const <String, dynamic>{},
+      id: readInt(json['id']),
+      reference: readString(json['reference']),
+      guestAccessToken: readOptionalString(json['guest_access_token']),
+      // Mobile creation names it `guest_access_expires_at`; lookup results
+      // and some backends use `expires_at`.
+      guestAccessExpiresAt: readDate(
+        json['guest_access_expires_at'] ?? json['expires_at'],
       ),
-      requester: TicketRequester.fromJson(requesterJson),
-      assignee: json['assignee'] != null
-          ? TicketAssigneeDetail.fromJson(
-              Map<String, dynamic>.from(json['assignee'] as Map),
-            )
+      subject: readString(json['subject']),
+      description: readString(json['description']),
+      status: TicketStatusField.read(json['status']),
+      priority: TicketStatusField.read(json['priority']),
+      channel: readString(json['channel'], 'web'),
+      metadata: readMap(json['metadata']) ?? <String, dynamic>{},
+      requester: TicketRequester.fromJson(
+        readMap(json['requester']) ?? const <String, dynamic>{},
+      ),
+      assignee: assignee != null
+          ? TicketAssigneeDetail.fromJson(assignee)
           : null,
-      department: json['department'] != null
-          ? TicketDepartment.fromJson(
-              Map<String, dynamic>.from(json['department'] as Map),
-            )
+      department: department != null
+          ? TicketDepartment.fromJson(department)
           : null,
-      tags: (json['tags'] as List<dynamic>?)
-              ?.map((t) => Tag.fromJson(Map<String, dynamic>.from(t as Map)))
-              .toList() ??
-          [],
-      replies: (json['replies'] as List<dynamic>?)
-              ?.map((r) => Reply.fromJson(Map<String, dynamic>.from(r as Map)))
-              .toList() ??
-          [],
-      activities: json['activities'] as List<dynamic>? ?? [],
-      sla: json['sla'] != null
-          ? TicketSla.fromJson(Map<String, dynamic>.from(json['sla'] as Map))
-          : null,
-      isFollowing: json['is_following'] as bool? ?? false,
-      followersCount: json['followers_count'] as int? ?? 0,
-      resolvedAt: json['resolved_at'] != null
-          ? DateTime.parse(json['resolved_at'] as String)
-          : null,
-      closedAt: json['closed_at'] != null
-          ? DateTime.parse(json['closed_at'] as String)
-          : null,
-      createdAt: DateTime.parse(json['created_at'] as String),
-      updatedAt: DateTime.parse(json['updated_at'] as String),
+      tags: readMapList(json['tags']).map(Tag.fromJson).toList(),
+      replies: readMapList(json['replies']).map(Reply.fromJson).toList(),
+      activities: json['activities'] is List
+          ? json['activities'] as List<dynamic>
+          : const [],
+      sla: sla != null ? TicketSla.fromJson(sla) : null,
+      isFollowing: json['is_following'] == true,
+      followersCount: readInt(json['followers_count']),
+      resolvedAt: readDate(json['resolved_at']),
+      closedAt: readDate(json['closed_at']),
+      createdAt:
+          createdAt ??
+          updatedAt ??
+          DateTime.fromMillisecondsSinceEpoch(0, isUtc: true),
+      updatedAt:
+          updatedAt ??
+          createdAt ??
+          DateTime.fromMillisecondsSinceEpoch(0, isUtc: true),
     );
   }
 
@@ -193,6 +213,8 @@ class Ticket {
       'id': id,
       'reference': reference,
       if (guestAccessToken != null) 'guest_access_token': guestAccessToken,
+      if (guestAccessExpiresAt != null)
+        'guest_access_expires_at': guestAccessExpiresAt!.toIso8601String(),
       'subject': subject,
       'description': description,
       'status': status.toJson(),
@@ -218,5 +240,16 @@ class Ticket {
   bool get isResolved => status.value == 'resolved';
   bool get isClosed => status.value == 'closed';
   bool get isOpen => status.value == 'open';
-  String get guestRouteReference => guestAccessToken ?? reference;
+
+  /// What to put in a guest ticket route.
+  ///
+  /// Guest routes used to carry the permanent guest token. Servers now issue
+  /// expiring, verified access grants instead, which must not travel in a
+  /// route or a shareable link, so this is the ticket [reference]. Look the
+  /// grant up with `GuestAccessService`.
+  @Deprecated(
+    'Route guest screens by `reference`. The access token now lives in '
+    'GuestAccessStore. Will be removed in the next major release.',
+  )
+  String get guestRouteReference => reference;
 }

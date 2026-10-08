@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'escalated_config.dart';
 import 'providers/auth_provider.dart';
+import 'providers/guest_provider.dart';
 import 'providers/theme_provider.dart';
 import 'services/api_client.dart';
 
@@ -58,6 +59,7 @@ class EscalatedPlugin extends StatelessWidget {
     return ProviderScope(
       overrides: [
         authHooksProvider.overrideWithValue(config.authHooks),
+        guestAccessStoreProvider.overrideWithValue(config.guestAccessStore),
         apiClientProvider.overrideWith((ref) {
           final hooks = ref.watch(authHooksProvider);
           return ApiClient(

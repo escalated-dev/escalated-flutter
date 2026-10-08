@@ -6,6 +6,7 @@ import '../providers/auth_provider.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/auth/register_screen.dart';
 import '../screens/guest/guest_create_screen.dart';
+import '../screens/guest/guest_lookup_screen.dart';
 import '../screens/guest/guest_ticket_screen.dart';
 import '../screens/kb/kb_article_screen.dart';
 import '../screens/kb/kb_list_screen.dart';
@@ -60,6 +61,14 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/guest/create',
         builder: (context, state) => const GuestCreateScreen(),
       ),
+      // Before '/guest/:reference', which would otherwise match it.
+      GoRoute(
+        path: '/guest/lookup',
+        builder: (context, state) => GuestLookupScreen(
+          initialReference: state.uri.queryParameters['reference'],
+        ),
+      ),
+      // The ticket reference. Access grants never travel in the route.
       GoRoute(
         path: '/guest/:reference',
         builder: (context, state) => GuestTicketScreen(

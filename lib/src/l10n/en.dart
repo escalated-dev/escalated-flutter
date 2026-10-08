@@ -80,9 +80,34 @@ const Map<String, String> en = {
   'submit_ticket': 'Submit ticket',
   'your_name': 'Your name',
   'your_email': 'Your email',
-  'bookmark_notice': 'Bookmark this page to check your ticket status later.',
-  'copy_link': 'Copy link',
   'sign_in': 'Sign in',
+
+  // Verified guest access
+  'guest_access_expires':
+      'Access to this page ends {date}. Keep your reference {reference} to find this ticket again.',
+  'copy_reference': 'Copy reference',
+  'reference_copied': 'Reference copied',
+  'send_code': 'Send code',
+  'resend_code': 'Send a new code',
+  'verification_code': 'Verification code',
+  'verify_and_submit': 'Verify and submit',
+  'verify': 'Verify',
+  'verification_sent': 'We sent a code to {email}. It expires in 10 minutes.',
+  'verification_invalid':
+      'This code is invalid, expired or already used. Request a new code.',
+  'verification_explainer': 'We will email you a code to confirm your address.',
+  'guest_rate_limited': 'Too many attempts. Try again in {seconds} seconds.',
+  'guest_rate_limited_later': 'Too many attempts. Try again later.',
+  'guest_access_required':
+      'Your access to this ticket has ended. Verify your email to open it again.',
+  'guest_tickets_disabled': 'Guest tickets are not available.',
+  'verify_email': 'Verify email',
+  'find_ticket': 'Find your ticket',
+  'find_ticket_hint':
+      'Enter your ticket reference and the email you used. We will email you a code.',
+  'no_matching_tickets': 'No tickets match that reference and email.',
+  'failed_to_send_code': 'Failed to send the code. Please try again.',
+  'invalid_email': 'Enter a valid email address',
 
   // Filters
   'search_tickets': 'Search tickets...',

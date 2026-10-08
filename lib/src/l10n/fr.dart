@@ -80,10 +80,38 @@ const Map<String, String> fr = {
   'submit_ticket': 'Soumettre le ticket',
   'your_name': 'Votre nom',
   'your_email': 'Votre email',
-  'bookmark_notice':
-      'Ajoutez cette page \u00e0 vos favoris pour v\u00e9rifier le statut de votre ticket plus tard.',
-  'copy_link': 'Copier le lien',
   'sign_in': 'Se connecter',
+
+  // Verified guest access
+  'guest_access_expires':
+      "L'accès à cette page prend fin le {date}. Conservez votre référence {reference} pour retrouver ce ticket.",
+  'copy_reference': 'Copier la référence',
+  'reference_copied': 'Référence copiée',
+  'send_code': 'Envoyer le code',
+  'resend_code': 'Envoyer un nouveau code',
+  'verification_code': 'Code de vérification',
+  'verify_and_submit': 'Vérifier et envoyer',
+  'verify': 'Vérifier',
+  'verification_sent':
+      'Nous avons envoyé un code à {email}. Il expire dans 10 minutes.',
+  'verification_invalid':
+      'Ce code est invalide, expiré ou déjà utilisé. Demandez un nouveau code.',
+  'verification_explainer':
+      'Nous vous enverrons un code par e-mail pour confirmer votre adresse.',
+  'guest_rate_limited':
+      'Trop de tentatives. Réessayez dans {seconds} secondes.',
+  'guest_rate_limited_later': 'Trop de tentatives. Réessayez plus tard.',
+  'guest_access_required':
+      "Votre accès à ce ticket a pris fin. Vérifiez votre adresse e-mail pour l'ouvrir à nouveau.",
+  'guest_tickets_disabled': 'Les tickets invités ne sont pas disponibles.',
+  'verify_email': "Vérifier l'adresse e-mail",
+  'find_ticket': 'Retrouver votre ticket',
+  'find_ticket_hint':
+      "Saisissez la référence de votre ticket et l'adresse e-mail utilisée. Nous vous enverrons un code.",
+  'no_matching_tickets':
+      'Aucun ticket ne correspond à cette référence et à cette adresse e-mail.',
+  'failed_to_send_code': "Impossible d'envoyer le code. Veuillez réessayer.",
+  'invalid_email': 'Saisissez une adresse e-mail valide',
 
   // Filters
   'search_tickets': 'Rechercher des tickets...',
