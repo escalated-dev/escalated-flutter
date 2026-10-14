@@ -13,6 +13,11 @@ updates:
       interval: "weekly"
     labels:
       - "dependencies"
+    ignore:
+      # flutter_html 3.0.0 calls Element.matches, which html 0.15.7 removed;
+      # with 0.15.7 nothing importing ReplyThread compiles.
+      - dependency-name: "html"
+        versions: ["0.15.7"]
 
   - package-ecosystem: "pub"
     directory: "/example"
@@ -20,3 +25,8 @@ updates:
       interval: "weekly"
     labels:
       - "dependencies"
+    ignore:
+      # flutter_html 3.0.0 calls Element.matches, which html 0.15.7 removed;
+      # with 0.15.7 nothing importing ReplyThread compiles.
+      - dependency-name: "html"
+        versions: ["0.15.7"]
